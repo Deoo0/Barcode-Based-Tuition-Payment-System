@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\Admin\DashboardController;
 
 Route::get('/', function () {
     return view('login');
@@ -30,4 +31,5 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/scan', [StudentController::class, 'scan'])->name('scan');
     Route::post('/process-payment',[PaymentController::class,'payment']);
     Route::get('/students/search', [StudentController::class, 'search'])->name('students.search');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });

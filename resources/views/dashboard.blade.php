@@ -68,7 +68,7 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
                                 Total Students</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">1,254</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{$totalStudents}}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-users fa-2x text-gray-300"></i>
@@ -86,7 +86,7 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 Total Revenue</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">₱2,340,000</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">₱{{ number_format($totalRevenue, 2) }}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-peso-sign fa-2x text-gray-300"></i>
@@ -104,7 +104,7 @@
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
                                 Pending Payments</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ $pendingPayments }}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-clock fa-2x text-gray-300"></i>
@@ -124,12 +124,12 @@
                                 Payment Completion</div>
                             <div class="row no-gutters align-items-center">
                                 <div class="col-auto">
-                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">72%</div>
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{{ $completionRate }}%</div>
                                 </div>
                                 <div class="col">
                                     <div class="progress progress-sm mr-2">
-                                        <div class="progress-bar bg-warning" role="progressbar" style="width: 72%" 
-                                            aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
+                                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ $completionRate }}%" 
+                                            aria-valuenow="{{ $completionRate }}" aria-valuemin="0" aria-valuemax="100"></div>
                                     </div>
                                 </div>
                             </div>
@@ -214,33 +214,36 @@
                                     <th>Student</th>
                                     <th>Amount</th>
                                     <th>Status</th>
+                                    <th>Cashier</th>
+                                    <th>Method</th>
+                                    <th class="pe-4">Date</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @forelse ($transactions as $transaction)
                                 <tr>
-                                    <td>TRX-2023-001</td>
-                                    <td>Juan Dela Cruz</td>
-                                    <td>₱12,500</td>
-                                    <td><span class="badge badge-success">Paid</span></td>
+                                    <td>{{ $transaction->reference_number }}</td>
+                                    <td>{{ $transaction->student->name }}</td>
+                                    <td class="fw-semibold">₱{{ number_format($transaction->amount, 2) }}</td>
+                                    <td>
+                                    <span class="badge bg-{{ 
+                                        $transaction->status == 'Paid' ? 'success' : 
+                                        ($transaction->status == 'Pending' ? 'warning' : 
+                                        'danger') 
+                                    }}">
+                                        {{ $transaction->status }}
+                                    </span>
+                                    <td>
+                                    <td>{{ $transaction->cashier->name }}</td>
+                                    <td>{{$transaction->payment_method}}</td>
                                 </tr>
+                                @empty
                                 <tr>
-                                    <td>TRX-2023-002</td>
-                                    <td>Maria Santos</td>
-                                    <td>₱10,000</td>
-                                    <td><span class="badge badge-success">Paid</span></td>
+                                    <td colspan="9" class="text-center py-5">
+                                        <p class="text-muted">There are no transactions to display at this time</p>
+                                    </td>
                                 </tr>
-                                <tr>
-                                    <td>TRX-2023-003</td>
-                                    <td>Pedro Reyes</td>
-                                    <td>₱8,750</td>
-                                    <td><span class="badge badge-warning">Pending</span></td>
-                                </tr>
-                                <tr>
-                                    <td>TRX-2023-004</td>
-                                    <td>Ana Lopez</td>
-                                    <td>₱15,000</td>
-                                    <td><span class="badge badge-success">Paid</span></td>
-                                </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -280,73 +283,51 @@
 @endsection
 
 @section('scripts')
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-// Revenue Chart
-document.addEventListener('DOMContentLoaded', function() {
-    var ctx = document.getElementById('revenueChart').getContext('2d');
-    var revenueChart = new Chart(ctx, {
+    const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+    const revenueChart = new Chart(ctxRevenue, {
         type: 'line',
         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
             datasets: [{
                 label: 'Revenue',
-                data: [150000, 180000, 200000, 220000, 250000, 280000, 300000, 320000, 300000, 280000, 250000, 350000],
+                data: [120000, 190000, 300000, 500000, 200000],
                 backgroundColor: 'rgba(78, 115, 223, 0.05)',
                 borderColor: 'rgba(78, 115, 223, 1)',
-                pointBackgroundColor: 'rgba(78, 115, 223, 1)',
-                pointBorderColor: '#fff',
-                pointHoverBackgroundColor: '#fff',
-                pointHoverBorderColor: 'rgba(78, 115, 223, 1)',
-                borderWidth: 2,
-                tension: 0.3
+                borderWidth: 2
             }]
         },
         options: {
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
+            responsive: true,
             scales: {
                 y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return '₱' + value.toLocaleString();
-                        }
-                    }
+                    beginAtZero: true
                 }
             }
         }
     });
 
-    // Payment Methods Chart
-    var ctx2 = document.getElementById('paymentMethodsChart').getContext('2d');
-    var paymentMethodsChart = new Chart(ctx2, {
+    const ctxMethods = document.getElementById('paymentMethodsChart').getContext('2d');
+    const paymentChart = new Chart(ctxMethods, {
         type: 'doughnut',
         data: {
             labels: ['Cash', 'Credit Card', 'Bank Transfer'],
             datasets: [{
                 data: [55, 30, 15],
                 backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-                hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
-                hoverBorderColor: "rgba(234, 236, 244, 1)",
-            }],
+                hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf']
+            }]
         },
         options: {
-            maintainAspectRatio: false,
+            cutout: '70%',
+            responsive: true,
             plugins: {
                 legend: {
-                    display: false
+                    position: 'bottom'
                 }
-            },
-            cutout: '70%',
-        },
+            }
+        }
     });
-});
 </script>
 @endsection
