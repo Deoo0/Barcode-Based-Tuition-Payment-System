@@ -138,6 +138,12 @@
                                 <i class="bi bi-stop-circle me-2"></i>Stop Scanner
                             </button>
                         </div>
+                        <div class="camera-selection mb-3 d-none" id="camera-selection">
+                            <label for="camera-select" class="form-label text-white">Select Camera:</label>
+                            <select class="form-select" id="camera-select">
+                                <option value="">Default Camera</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -262,155 +268,200 @@
     const stopButton = document.getElementById("stop-scanning");
     const scannerContainer = document.getElementById("scanner-container");
     let scannerActive = false;
-    let preWarmedScanner = false;
+    let currentStream = null;
     let lastDetectionTime = 0;
-    const detectionThrottle = 1000; // 1 second between detections
+    const detectionThrottle = 1000;
 
-    // Pre-warm the scanner on page load
-    initializeScanner();
-    stopScanner(); // Immediately stop it but keep it ready
-    scannerContainer.style.display = 'none';
+    // Event listeners
+    startButton.addEventListener('click', initializeScanner);
+    stopButton.addEventListener('click', stopScanner);
 
-    function initializeScanner() {
-        if (preWarmedScanner) {
-            // Scanner already initialized, just make it visible
-            scannerContainer.style.display = 'block';
-            Quagga.start();
-            scannerActive = true;
-            startButton.classList.add('d-none');
-            stopButton.classList.remove('d-none');
-            return;
-        }
+    async function initializeScanner() {
+        try {
+            // Stop any existing scanner first
+            if (scannerActive) stopScanner();
+            
+            // Get camera selection
+            const cameraId = document.getElementById('camera-select').value;
+            
+            const constraints = {
+                width: { ideal: 1280 },
+                height: { ideal: 720 },
+                facingMode: "environment",
+                deviceId: cameraId ? { exact: cameraId } : undefined
+            };
 
-        Quagga.init({
-            inputStream: {
-                name: "Live",
-                type: "LiveStream",
-                target: scannerContainer,
-                constraints: {
-                    width: 1280,
-                    height: 720,
-                    facingMode: "environment",
-                    focusMode: "continuous",
+            // Test camera access first
+            const stream = await navigator.mediaDevices.getUserMedia({ 
+                video: constraints,
+                audio: false
+            });
+            
+            // Store the stream so we can stop it later
+            currentStream = stream;
+            
+            // Release the stream immediately (Quagga will get its own)
+            stream.getTracks().forEach(track => track.stop());
+            
+            // Now initialize Quagga with optimized settings for barcode scanning
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: scannerContainer,
+                    constraints: constraints,
+                    area: { // defines region of the detection
+                        top: "20%",    // top offset
+                        right: "20%",  // right offset
+                        left: "20%",   // left offset
+                        bottom: "20%"  // bottom offset
+                    }
                 },
-            },
-            decoder: {
-                readers: ["code_128_reader"],
-                debug: {
-                    drawBoundingBox: true,
-                    showFrequency: false,
-                    drawScanline: false,
-                    showPattern: false
+                decoder: {
+                    readers: ["code_128_reader"], // Only use Code 128 reader for student IDs
+                    debug: {
+                        drawBoundingBox: true,
+                        showFrequency: false,
+                        drawScanline: true,
+                        showPattern: false
+                    }
+                },
+                locator: {
+                    patchSize: "medium",
+                    halfSample: true
+                },
+                locate: true, // try to locate the barcode in the image
+                numOfWorkers: 4, // use 4 workers for better performance
+                frequency: 10, // scan interval in frames per second
+                multiple: false // don't look for multiple barcodes
+            }, function(err) {
+                if (err) {
+                    console.error("Scanner initialization failed:", err);
+                    showError("Failed to initialize scanner: " + (err.message || "Camera access denied"), true);
+                    return;
                 }
-            },
-            locator: {
-                patchSize: "large",
-                halfSample: false
-            },
-            locate: false,
-            numOfWorkers: navigator.hardwareConcurrency || 2,
-            frequency: 5,
-            multiple: false
-        }, function(err) {
-            if (err) {
-                console.error("Scanner initialization failed:", err);
-                showError("Failed to initialize scanner. Please check camera permissions.");
-                return;
-            }
-            optimizeScannerPerformance();
-            Quagga.start();
-            scannerActive = true;
-            startButton.classList.add('d-none');
-            stopButton.classList.remove('d-none');
-            scannerContainer.style.display = 'block';
-            preWarmedScanner = true;
-            
-            // Add scanner active visual feedback
-            scannerContainer.classList.add('scanner-active');
-        });
+                
+                console.log("Scanner initialized successfully");
+                Quagga.start();
+                scannerActive = true;
+                startButton.classList.add('d-none');
+                stopButton.classList.remove('d-none');
+                scannerContainer.style.display = 'block';
+                scannerContainer.classList.add('scanner-active');
+                
+                // Load available cameras
+                loadCameras();
+            });
 
-        Quagga.onDetected(function(result) {
-            const now = Date.now();
-            if (now - lastDetectionTime < detectionThrottle) return;
-            lastDetectionTime = now;
-            
-            if (result && result.codeResult) {
-                scannerContainer.classList.add('scan-success');
-                setTimeout(() => {
-                    scannerContainer.classList.remove('scan-success');
-                }, 1000);
+            // Add detection listeners
+            Quagga.onProcessed(function(result) {
+                const drawingCtx = Quagga.canvas.ctx.overlay;
+                const drawingCanvas = Quagga.canvas.dom.overlay;
                 
-                const code = result.codeResult.code;
-                console.log("Barcode detected:", code);
-                document.getElementById("barcode").value = code;
-                stopScanner();
-                
-                // Vibrate on successful scan if available
-                if (navigator.vibrate) navigator.vibrate(100);
-                
-                // Auto-submit after short delay
-                setTimeout(() => {
-                    document.querySelector('form[action="/scan"]').submit();
-                }, 300);
-            }
-        });
+                if (result) {
+                    if (result.boxes) {
+                        drawingCtx.clearRect(0, 0, parseInt(drawingCanvas.getAttribute("width")), parseInt(drawingCanvas.getAttribute("height")));
+                        result.boxes.filter(function(box) {
+                            return box !== result.box;
+                        }).forEach(function(box) {
+                            Quagga.ImageDebug.drawPath(box, {x: 0, y: 1}, drawingCtx, {color: "green", lineWidth: 2});
+                        });
+                    }
 
-        // Initialize camera selection
-        initCameraSelection();
+                    if (result.box) {
+                        Quagga.ImageDebug.drawPath(result.box, {x: 0, y: 1}, drawingCtx, {color: "blue", lineWidth: 2});
+                    }
+
+                    if (result.codeResult && result.codeResult.code) {
+                        Quagga.ImageDebug.drawPath(result.line, {x: 'x', y: 'y'}, drawingCtx, {color: 'red', lineWidth: 3});
+                    }
+                }
+            });
+
+            Quagga.onDetected(function(result) {
+                const now = Date.now();
+                if (now - lastDetectionTime < detectionThrottle) return;
+                lastDetectionTime = now;
+                
+                if (result?.codeResult?.code) {
+                    console.log("Barcode detected and processed:", result.codeResult.code);
+                    handleSuccessfulScan(result.codeResult.code);
+                } else {
+                    console.log("Detection occurred but no valid barcode found");
+                }
+            });
+
+        } catch (err) {
+            console.error("Camera access error:", err);
+            showError("Camera access denied. Please check permissions.", true);
+        }
     }
 
     function stopScanner() {
         if (scannerActive) {
+            console.log("Stopping scanner...");
             Quagga.stop();
             scannerActive = false;
             startButton.classList.remove('d-none');
             stopButton.classList.add('d-none');
             scannerContainer.classList.remove('scanner-active');
+            
+            // Stop any media tracks
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+                currentStream = null;
+            }
         }
     }
 
-    function optimizeScannerPerformance() {
-        // Reduce image processing area
-        Quagga.ImageDebug.setStyle('polygon', {
-            strokeStyle: 'red',
-            lineWidth: 2,
-            fillStyle: 'rgba(255, 0, 0, 0.3)'
-        });
-        
-        // Limit scanning area to center 60%
-        Quagga.ImageDebug.drawPath(
-            { x: 0.2, y: 0.2 },
-            { x: 0.8, y: 0.8 },
-            { x: 0.2, y: 0.8 },
-            { x: 0.8, y: 0.2 }
-        );
-    }
-
-    async function initCameraSelection() {
+    async function loadCameras() {
         try {
-            // Get available cameras
             const devices = await navigator.mediaDevices.enumerateDevices();
             const videoDevices = devices.filter(device => device.kind === 'videoinput');
-            
             const cameraSelect = document.getElementById('camera-select');
-            cameraSelect.innerHTML = '<option value="">Default Camera</option>';
             
-            videoDevices.forEach(device => {
+            // Clear existing options except the first one
+            while (cameraSelect.options.length > 1) {
+                cameraSelect.remove(1);
+            }
+            
+            // Add available cameras
+            videoDevices.forEach((device, index) => {
                 const option = document.createElement('option');
                 option.value = device.deviceId;
-                option.text = device.label || `Camera ${cameraSelect.length}`;
+                option.text = device.label || `Camera ${index + 1}`;
                 cameraSelect.appendChild(option);
             });
             
+            // Show selection if multiple cameras
             if (videoDevices.length > 1) {
                 document.getElementById('camera-selection').classList.remove('d-none');
             }
+            
         } catch (err) {
-            console.error("Error enumerating devices:", err);
+            console.error("Error loading cameras:", err);
         }
     }
 
+    function handleSuccessfulScan(code) {
+        console.log("Handling successful scan of code:", code);
+        scannerContainer.classList.add('scan-success');
+        setTimeout(() => scannerContainer.classList.remove('scan-success'), 1000);
+        
+        document.getElementById("barcode").value = code;
+        stopScanner();
+        
+        // Provide feedback
+        if (navigator.vibrate) navigator.vibrate(100);
+        
+        // Auto-submit after short delay
+        setTimeout(() => {
+            document.querySelector('form[action="/scan"]').submit();
+        }, 300);
+    }
+
     function showError(message, isFatal = false) {
+        console.log("Showing error:", message);
         const alertDiv = document.createElement('div');
         alertDiv.className = 'alert alert-danger mt-3';
         alertDiv.innerHTML = `
@@ -433,67 +484,9 @@
         }
     }
 
-    function manageFocus() {
-        const barcodeInput = document.getElementById("barcode");
-        
-        // Auto-focus when scanner stops
-        stopButton.addEventListener("click", function() {
-            setTimeout(() => {
-                barcodeInput.focus();
-            }, 100);
-        });
-        
-        // When input gets focus, stop scanner
-        barcodeInput.addEventListener("focus", function() {
-            if (scannerActive) {
-                stopScanner();
-            }
-        });
-    }
-
-    // Event listeners
-    startButton.addEventListener('click', initializeScanner);
-    stopButton.addEventListener('click', stopScanner);
-    document.getElementById('camera-select').addEventListener('change', function() {
-        stopScanner();
-        initializeScanner();
-    });
-
     // Clean up when leaving page
     window.addEventListener('beforeunload', stopScanner);
-    
-    // Initialize focus management
-    manageFocus();
-
-    // Payment Form Handling
-    const paymentMethod = document.getElementById('payment_method');
-    const referenceInput = document.getElementById('reference');
-    const form = document.getElementById('paymentForm');
-
-    function toggleReferenceRequirement() {
-        const method = paymentMethod.value;
-        if (method === 'cash') {
-            referenceInput.removeAttribute('required');
-        } else {
-            referenceInput.setAttribute('required', 'required');
-        }
-    }
-
-    paymentMethod.addEventListener('change', toggleReferenceRequirement);
-
-    form.addEventListener('submit', function (e) {
-        const method = paymentMethod.value;
-        const refValue = referenceInput.value.trim();
-
-        // If not cash and no reference, generate one
-        if (method !== 'cash' && refValue === '') {
-            const randomRef = Math.floor(10000 + Math.random() * 90000);
-            referenceInput.value = randomRef;
-        }
-    });
-
-    // Initialize reference requirement
-    toggleReferenceRequirement();
+    window.addEventListener('pagehide', stopScanner);
 });
 </script>
 
@@ -609,6 +602,41 @@
     
     .form-select, .form-control {
         padding: 0.5rem 1rem;
+    }
+    .scanner-active {
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.5);
+    position: relative;
+    }
+
+    .scanner-active::after {
+        content: "Point camera at barcode";
+        position: absolute;
+        bottom: 10px;
+        left: 0;
+        right: 0;
+        text-align: center;
+        color: white;
+        font-weight: bold;
+        text-shadow: 0 0 3px black;
+        z-index: 10;
+    }
+
+    .scan-success {
+        animation: scanSuccess 0.5s ease;
+    }
+
+    @keyframes scanSuccess {
+        0% { box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.5); }
+        100% { box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.5); }
+    }
+
+    /* Debugging overlay */
+    canvas.drawingBuffer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0.5;
+        pointer-events: none;
     }
 </style>
 
