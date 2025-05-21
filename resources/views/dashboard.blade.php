@@ -247,13 +247,13 @@
                             </tbody>
                         </table>
                     </div>
-                    <a href="#" class="btn btn-block btn-light mt-2">View All Transactions</a>
+                    <a href="/transactions" class="btn btn-block btn-light mt-2">View All Transactions</a>
                 </div>
             </div>
         </div>
 
         <!-- Recent Activity -->
-        <div class="col-lg-6 mb-4">
+        {{-- <div class="col-lg-6 mb-4">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
                     <h6 class="m-0 font-weight-bold text-primary">Recent Activity</h6>
@@ -277,7 +277,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
     </div>
 </div>
 @endsection
@@ -329,5 +329,40 @@
             }
         }
     });
+
+    const paymentLabels = @json(array_keys($paymentData->toArray()));
+    const paymentValues = @json(array_values($paymentData->toArray()));
+
+    const ctx = document.getElementById('paymentMethodsChart').getContext('2d');
+    const paymentMethodsChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: paymentLabels,
+            datasets: [{
+                data: paymentData,
+                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+                hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+            maintainAspectRatio: false,
+            tooltips: {
+                backgroundColor: "rgb(255,255,255)",
+                bodyFontColor: "#858796",
+                borderColor: '#dddfeb',
+                borderWidth: 1,
+                xPadding: 15,
+                yPadding: 15,
+                displayColors: false,
+                caretPadding: 10,
+            },
+            legend: {
+                display: false
+            },
+            cutoutPercentage: 60,
+        },
+    });
+
 </script>
 @endsection

@@ -15,7 +15,7 @@
         
         <div class="d-flex flex-column flex-md-row gap-2 w-100 w-md-auto">
             <!-- Search Input -->
-            <div class="flex-grow-1">
+            {{-- <div class="flex-grow-1">
                 <div class="input-group">
                     <span class="input-group-text bg-white border-end-0">
                         <i class="bi bi-search text-muted"></i>
@@ -27,12 +27,12 @@
                         Filter
                     </button>
                 </div>
-            </div>
+            </div> --}}
             
             <!-- Export Button -->
-            <button class="btn btn-primary d-flex align-items-center">
+            {{-- <button class="btn btn-primary d-flex align-items-center">
                 <i class="bi bi-download me-2"></i> Export
-            </button>
+            </button> --}}
         </div>
     </div>
 
@@ -118,7 +118,7 @@
                             <th>Cashier</th>
                             <th>Method</th>
                             <th class="pe-4">Date</th>
-                            <th class="text-end pe-4">Actions</th>
+                            {{-- <th class="text-end pe-4">Actions</th> --}}
                         </tr>
                     </thead>
                     <tbody>
@@ -158,7 +158,7 @@
                                 </span>
                             </td>
                             <td>{{ optional($transaction->created_at)->format('M d, Y') }}</td>
-                            <td class="text-end pe-4">
+                            {{-- <td class="text-end pe-4">
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -182,7 +182,7 @@
                                         </li>
                                     </ul>
                                 </div>
-                            </td>
+                            </td> --}}
                         </tr>
                         @empty
                         <tr>

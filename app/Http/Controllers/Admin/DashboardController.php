@@ -26,7 +26,12 @@ class DashboardController extends Controller
             ? round(($studentsWithCompletedPayment / $totalStudents) * 100, 2)
             : 0;
 
+         $paymentData = Payment::selectRaw('payment_method, COUNT(*) as total')
+        ->groupBy('payment_method')
+        ->pluck('total', 'payment_method');
+
         return view('dashboard', [
+            'paymentData' => $paymentData,
             'transactions' => $transactions,
             'totalTransactions' => $totalTransactions,
             'totalStudents' => $totalStudents,

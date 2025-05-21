@@ -17,7 +17,7 @@
                 <h5 class="mb-0"><i class="bi bi-upc-scan me-2"></i>Student Identification</h5>
             </div>
             <div class="card-body p-4">
-                <form method="POST" action="/scan">
+                <form method="POST" action="{{ route('scan') }}">
                     @csrf
                     <div class="input-group input-group-lg">
                         <span class="input-group-text bg-light"><i class="bi bi-person-badge"></i></span>
@@ -62,6 +62,7 @@
                     </div>
                     <div class="card-body">
                         @if(isset($student))
+                        
                         <div class="student-details-grid">
                             <div class="detail-item">
                                 <span class="detail-label">Student ID</span>
@@ -156,10 +157,11 @@
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            
 
             <!-- Modal Body -->
             <div class="modal-body">
-                <form id="paymentForm" method="POST" action="/process-payment">
+                <form id="paymentForm" method="POST" action="{{ route('process-payment')}}">
                     @csrf
                     <input type="hidden" name="student_id" value="{{ $student->id }}">
                     <input type="hidden" name="cashier_id" value="{{ auth()->user()->id }}">
@@ -343,7 +345,9 @@
 
     function toggleReferenceRequirement() {
         const method = paymentMethod.value;
-        if (method === 'cash') {
+        const status = document.querySelector('select[name="status"]').value;
+
+        if (method === 'cash' || status === 'Partial') {
             referenceInput.removeAttribute('required');
         } else {
             referenceInput.setAttribute('required', 'required');
