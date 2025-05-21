@@ -118,7 +118,7 @@
                             <th>Cashier</th>
                             <th>Method</th>
                             <th class="pe-4">Date</th>
-                            {{-- <th class="text-end pe-4">Actions</th> --}}
+                            <th class="text-end pe-4">Actions</th> 
                         </tr>
                     </thead>
                     <tbody>
@@ -158,7 +158,7 @@
                                 </span>
                             </td>
                             <td>{{ optional($transaction->created_at)->format('M d, Y') }}</td>
-                            {{-- <td class="text-end pe-4">
+                            <td class="text-end pe-4">
                                 <div class="dropdown">
                                     <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
                                         <i class="bi bi-three-dots-vertical"></i>
@@ -176,13 +176,13 @@
                                         </li>
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
-                                            <a class="dropdown-item text-danger" href="#">
-                                                <i class="bi bi-trash me-2"></i> Void Transaction
-                                            </a>
+                                            <form  action="/delete/transaction/{{$transaction->id}}" method="POST" onsubmit="return confirm('Are you sure?')">
+                                                <button class="dropdown-item text-danger"><i class="bi bi-trash me-2"></i> Void Transaction</button>
+                                            </form>
                                         </li>
                                     </ul>
                                 </div>
-                            </td> --}}
+                            </td> 
                         </tr>
                         @empty
                         <tr>

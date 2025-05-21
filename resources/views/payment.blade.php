@@ -143,6 +143,46 @@
                 </div>
             </div>
         </div>
+        <!-- Add a payment history section -->
+@if(isset($student) && $student->payments->count() > 0)
+<div class="card mt-4 shadow-sm">
+    <div class="card-header bg-white">
+        <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Payment History</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Term</th>
+                        <th>Amount</th>
+                        <th>Method</th>
+                        <th>Receipt No.</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($student->payments->sortByDesc('created_at') as $payment)
+                    <tr>
+                        <td>{{ $payment->created_at->format('M d, Y') }}</td>
+                        <td>{{ $payment->term }}</td>
+                        <td>₱{{ number_format($payment->amount, 2) }}</td>
+                        <td>{{ ucfirst($payment->payment_method) }}</td>
+                        <td>{{ $payment->reference_number ?? 'N/A' }}</td>
+                        <td>
+                            <span class="badge bg-{{ $payment->status == 'Paid' ? 'success' : ($payment->status == 'Partial' ? 'warning' : 'danger') }}">
+                                {{ $payment->status }}
+                            </span>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+@endif
     </div>
 
     <!-- Payment Modal -->
@@ -360,10 +400,11 @@
     // On form submit, generate 5-digit reference if needed
     form.addEventListener('submit', function (e) {
         const method = paymentMethod.value;
+        const status = document.querySelector('select[name="status"]').value;
         const refValue = referenceInput.value.trim();
 
         // If not cash and no reference, generate one
-        if (refValue === '') {
+        if (refValue === '' && status !== 'Partial') {
             const randomRef = Math.floor(10000 + Math.random() * 90000);
             referenceInput.value = randomRef;
         }
