@@ -51,5 +51,9 @@ class PaymentController extends Controller
     // Redirect or return response
     return redirect('payment')->with('success', 'Payment recorded successfully!');
 }
+public function deleteTransaction(Payment $payment){
+        $payment->delete();
+        return redirect('/transactions');
+    }
 }
 

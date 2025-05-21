@@ -192,8 +192,6 @@
         
                                         <!-- Delete Form -->
                                         <form action="/delete/student/{{ $student->id }}" method="POST" onsubmit="return confirm('Are you sure?')" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
                                             <button class="btn btn-sm btn-danger">
                                                 <i class="bi bi-trash3"></i> Delete
                                             </button>

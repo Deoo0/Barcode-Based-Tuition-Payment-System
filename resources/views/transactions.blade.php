@@ -177,6 +177,8 @@
                                         <li><hr class="dropdown-divider"></li>
                                         <li>
                                             <form  action="/delete/transaction/{{$transaction->id}}" method="POST" onsubmit="return confirm('Are you sure?')">
+                                                @csrf
+                                                @method('DELETE')
                                                 <button class="dropdown-item text-danger"><i class="bi bi-trash me-2"></i> Void Transaction</button>
                                             </form>
                                         </li>

@@ -32,4 +32,5 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/process-payment', [PaymentController::class, 'payment'])->name('process-payment');
     Route::get('/students/search', [StudentController::class, 'search'])->name('students.search');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::delete('/delete/transaction/{payment}',[PaymentController::class,'deleteTransaction']);
 });
