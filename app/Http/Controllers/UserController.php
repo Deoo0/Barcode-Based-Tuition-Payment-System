@@ -14,11 +14,11 @@ class UserController extends Controller
     }
     public function login(Request $request){
         $incomingField = $request->validate([
-            'loginusername' => 'required',
-            'loginpassword' => 'required'
+            'Username' => ['required','min:3'],
+            'Password' => ['required','min:4']
         ]);
 
-        if(Auth::attempt(['username'=>$incomingField['loginusername'],'password'=>$incomingField['loginpassword']])){
+        if(Auth::attempt(['username'=>$incomingField['Username'],'password'=>$incomingField['Password']])){
             $request->session()->regenerate();
             return redirect()->route('home');
         }else{
@@ -29,7 +29,7 @@ class UserController extends Controller
         $incomingField = $request->validate([
             'name' => ['min:1','max:50'], 
             'username' => 'required',
-            'password' => 'required',
+            'password' => ['required','min:4'],
             'email' => 'required',
             'usertype_id' => 'required'
         ]);

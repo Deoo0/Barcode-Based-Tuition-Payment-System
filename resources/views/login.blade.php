@@ -25,7 +25,7 @@
     </section>
 
     <section class="login-section" aria-label="Login form">
-      <form class="login-form" id="loginForm" action="/login" method="POST">
+      <form class="login-form" id="loginForm" action="/login" method="POST" novalidate>
         @csrf
         {{-- User Icon --}}
         <div class="user-avatar">
@@ -45,18 +45,18 @@
 
         {{-- Username --}}
         <div class="form-floating mb-3">
-          <input type="text" name="loginusername" value="{{ old('loginusername') }}" autocomplete="username" class="form-control" id="floatingInput" placeholder="username"  style="min-width: 350px;">
+          <input type="text" name="Username" value="{{ old('loginusername') }}" autocomplete="username" class="form-control" id="floatingInput" placeholder="username"  style="min-width: 350px;">
           <label for="floatingInput">Username</label>
-          @error('loginusername')
+          @error('Username')
             <small class="text-danger">{{ $message }}</small>
           @enderror
         </div>
 
         {{-- Password --}}
         <div class="form-floating">
-          <input type="password" name="loginpassword" autocomplete="current-password" class="form-control" id="floatingPassword" placeholder="password"  style="min-width: 350px;">
+          <input type="password" name="Password" autocomplete="current-password" class="form-control" id="floatingPassword" placeholder="password"  style="min-width: 350px;">
           <label for="floatingPassword">Password</label>
-          @error('loginpassword')
+          @error('Password')
             <small class="text-danger">{{ $message }}</small>
           @enderror
         </div>
