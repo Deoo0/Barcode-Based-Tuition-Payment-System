@@ -1,4 +1,6 @@
 # Barcode-Based Student Tuition Payment System
+The Barcode-Based Student Tuition Payment System is designed to streamline and modernize tuition payment tracking in educational institutions. By integrating barcode scanning, this system allows staff to instantly retrieve a student’s payment records, reducing manual lookup time and improving accuracy. It ensures real-time monitoring of transactions and supports multiple payment methods and statuses, all presented through an intuitive dashboard.
+
 REPOSITORY LINK -> https://github.com/Deoo0/barcode-tuition-payment-system.git
 
 GITHUB REPO:
