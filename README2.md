@@ -1,6 +1,17 @@
 # Barcode-Based Student Tuition Payment System
 REPOSITORY LINK -> https://github.com/Deoo0/barcode-tuition-payment-system.git
 
+GITHUB REPO:
+![alt text](<tuition payment.png>)
+
+SET UP GITHUB REPO: (git init, git add . , git commit)
+![alt text](commands.png)
+
+Adding Remote Repository:
+![alt text](<git remote add.png>)
+
+Pushing System Files to Remote repo:
+![alt text](push2.png)
 
 1. Install XAMPP and Composer
     1. Install Required Tools
@@ -40,3 +51,7 @@ During install, make sure Apache, MySQL, and phpMyAdmin are selected.
 7. Run `php artisan migrate` (if needed)
 8. Start the server with `php artisan serve`
     ![alt text](image-3.png)
+
+
+    GANTT CHART
+    ![alt text](Gantt-Chart.jpeg)
