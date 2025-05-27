@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container-fluid py-4">
-    <!-- Header with Search and Filters -->
+
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 gap-3">
         <div>
             <h2 class="fw-bold text-primary mb-0">
@@ -14,29 +14,11 @@
         </div>
         
         <div class="d-flex flex-column flex-md-row gap-2 w-100 w-md-auto">
-            <!-- Search Input -->
-            {{-- <div class="flex-grow-1">
-                <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0">
-                        <i class="bi bi-search text-muted"></i>
-                    </span>
-                    <input type="text" 
-                           class="form-control border-start-0" 
-                           placeholder="Search transactions...">
-                    <button class="btn btn-outline-secondary" type="button">
-                        Filter
-                    </button>
-                </div>
-            </div> --}}
             
-            <!-- Export Button -->
-            {{-- <button class="btn btn-primary d-flex align-items-center">
-                <i class="bi bi-download me-2"></i> Export
-            </button> --}}
         </div>
     </div>
 
-    <!-- Stats Cards -->
+
     <div class="row mb-4">
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
@@ -103,7 +85,7 @@
         </div>
     </div>
 
-    <!-- Transactions Table -->
+
     <div class="card border-0 shadow-sm">
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -199,7 +181,7 @@
                 </table>
             </div>
             
-            <!-- Pagination -->
+    
             @if($transactions->hasPages())
             <div class="card-footer bg-white border-0 py-3">
                 <div class="d-flex justify-content-between align-items-center">

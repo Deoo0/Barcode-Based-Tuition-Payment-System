@@ -11,7 +11,7 @@
         </button>
     </div>
 
-    <!-- Users Table -->
+
     <div class="card shadow-sm border-0">
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -57,7 +57,7 @@
                                 </div>
                             </td>
                         </tr>
-<!-- Edit User Modal -->
+
 <div class="modal fade" id="editUserModal{{$user->id}}" tabindex="-1" aria-labelledby="editUserModalLabel{{$user->id}}" aria-hidden="true">
     <div class="modal-dialog">
         <form action="/edit-user/{{ $user->id }}" method="POST">
@@ -69,25 +69,25 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- Full Name -->
+                
                     <div class="mb-3">
                         <label for="fullname" class="form-label">Full Name</label>
                         <input type="text" name="name" class="form-control" value="{{ $user->name }}" required>
                     </div>
 
-                    <!-- Username -->
+                
                     <div class="mb-3">
                         <label for="username" class="form-label">Username</label>
                         <input type="text" name="username" class="form-control" value="{{ $user->username }}" required>
                     </div>
 
-                    <!-- Email -->
+            
                     <div class="mb-3">
                         <label for="email" class="form-label">Email Address</label>
                         <input type="email" name="email" class="form-control" value="{{ $user->email }}" required>
                     </div>
 
-                    <!-- User Type -->
+                
                     <div class="mb-3">
                         <label class="form-label">User Type</label><br>
                         <div class="form-check form-check-inline">
@@ -120,7 +120,7 @@
         </div>
     </div>
 
-    <!-- Add User Modal -->
+
     <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <form action="/register" method="POST">
@@ -131,31 +131,31 @@
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <!-- Full Name -->
+                
                         <div class="mb-3">
                             <label for="fullname" class="form-label">Full Name</label>
                             <input type="text" name="name" id="fullname" class="form-control" placeholder="Juan Dela Cruz" required>
                         </div>
 
-                        <!-- Username -->
+                
                         <div class="mb-3">
                             <label for="username" class="form-label">Username</label>
                             <input type="text" name="username" id="username" class="form-control" placeholder="jdelacruz" required>
                         </div>
 
-                        <!-- Password -->
+            
                         <div class="mb-3">
                             <label for="password" class="form-label">Password</label>
                             <input type="password" name="password" id="password" class="form-control" placeholder="••••••••" required>
                         </div>
 
-                        <!-- Email -->
+            >
                         <div class="mb-3">
                             <label for="email" class="form-label">Email Address</label>
                             <input type="email" name="email" id="email" class="form-control" placeholder="juan@example.com" required>
                         </div>
 
-                        <!-- User Type -->
+                
                         <div class="mb-3">
                             <label class="form-label">User Type</label><br>
                             <div class="form-check form-check-inline">

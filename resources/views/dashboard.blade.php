@@ -50,7 +50,6 @@
 
 @section('content')
 <div class="container-fluid">
-    <!-- Page Heading -->
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
@@ -58,9 +57,7 @@
         </a>
     </div>
 
-    <!-- Stats Cards -->
     <div class="row">
-        <!-- Total Students -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card stat-card primary shadow h-100 py-2">
                 <div class="card-body">
@@ -78,7 +75,6 @@
             </div>
         </div>
 
-        <!-- Total Revenue -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card stat-card success shadow h-100 py-2">
                 <div class="card-body">
@@ -96,7 +92,6 @@
             </div>
         </div>
 
-        <!-- Pending Payments -->
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card stat-card info shadow h-100 py-2">
                 <div class="card-body">
@@ -114,7 +109,7 @@
             </div>
         </div>
 
-        <!-- Completion Rate -->
+
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card stat-card warning shadow h-100 py-2">
                 <div class="card-body">
@@ -143,9 +138,8 @@
         </div>
     </div>
 
-    <!-- Content Row -->
+
     <div class="row">
-        <!-- Revenue Chart -->
         <div class="col-xl-8 col-lg-7">
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -172,7 +166,7 @@
             </div>
         </div>
 
-        <!-- Pie Chart -->
+
         <div class="col-xl-4 col-lg-5">
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -198,7 +192,7 @@
         </div>
     </div>
 
-    <!-- Recent Activity -->
+
     <div class="row">
         <div class="col-lg-6 mb-4">
             <div class="card shadow mb-4">
@@ -251,33 +245,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- Recent Activity -->
-        {{-- <div class="col-lg-6 mb-4">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">Recent Activity</h6>
-                </div>
-                <div class="card-body">
-                    <div class="activity-item active pb-3">
-                        <div class="small text-gray-500">Today, 10:45 AM</div>
-                        <p class="mb-0">New payment received from Juan Dela Cruz (₱12,500)</p>
-                    </div>
-                    <div class="activity-item pb-3">
-                        <div class="small text-gray-500">Today, 9:30 AM</div>
-                        <p class="mb-0">Maria Santos completed her payment</p>
-                    </div>
-                    <div class="activity-item pb-3">
-                        <div class="small text-gray-500">Yesterday, 3:15 PM</div>
-                        <p class="mb-0">New student registered: Pedro Reyes</p>
-                    </div>
-                    <div class="activity-item">
-                        <div class="small text-gray-500">Yesterday, 10:00 AM</div>
-                        <p class="mb-0">System maintenance completed</p>
-                    </div>
-                </div>
-            </div>
-        </div> --}}
     </div>
 </div>
 @endsection

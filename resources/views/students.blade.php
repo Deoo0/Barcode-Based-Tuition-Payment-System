@@ -32,7 +32,7 @@
         </div>
     </div>
 
-    <!-- Add Student Modal (unchanged) -->
+
     <div class="modal fade" id="addStudentModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="addStudentModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <form action="/addStudent" method="POST">
@@ -93,7 +93,7 @@
         </div>
     </div>
 
-    <!-- Student Table -->
+
     <div class="card shadow-sm border-0">
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -120,12 +120,12 @@
                             <td>{{ optional($student->created_at)->format('M d, Y') }}</td>
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-2 flex-wrap">
-                                    <!-- View Button -->
+
                                     <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewStudentModal{{ $student->id }}">
                                         <i class="bi bi-search"></i> View
                                     </button>
         
-                                    <!-- View Modal -->
+                        
                                     <div class="modal fade" id="viewStudentModal{{ $student->id }}" tabindex="-1" aria-labelledby="viewStudentModalLabel{{ $student->id }}" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered modal-lg">
                                             <div class="modal-content">
@@ -185,12 +185,12 @@
                                     </div>
         
                                     @if (Auth::check() && Auth::user()->usertype->id == 1)
-                                        <!-- Edit Button -->
+                        
                                         <button class="btn btn-sm btn-primary">
                                             <i class="bi bi-pencil-square"></i> Edit
                                         </button>
         
-                                        <!-- Delete Form -->
+                                ->
                                         <form action="/delete/student/{{ $student->id }}" method="POST" onsubmit="return confirm('Are you sure?')" class="d-inline">
                                             @csrf
                                             @method('DELETE')

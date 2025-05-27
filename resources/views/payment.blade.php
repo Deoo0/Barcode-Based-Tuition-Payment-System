@@ -5,13 +5,13 @@
 @section('content')
 <div class="payment-portal-container">
     <div class="container py-5">
-        <!-- Header Section -->
+
         <div class="text-center mb-5">
             <h1 class="display-5 fw-bold text-primary mb-3">Tuition Payment Portal</h1>
             <p class="lead text-muted">Scan student barcode or enter ID manually to process payments</p>
         </div>
 
-        <!-- Barcode Input Section -->
+
         <div class="card shadow-lg border-0 rounded-3 mb-5">
             <div class="card-header bg-primary text-white rounded-top-3 py-3">
                 <h5 class="mb-0"><i class="bi bi-upc-scan me-2"></i>Student Identification</h5>
@@ -33,7 +33,7 @@
             </div>
         </div>
 
-        <!-- Status Messages -->
+
         @if(session('success'))
             <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
                 <i class="bi bi-check-circle-fill me-2 fs-4"></i>
@@ -50,9 +50,9 @@
             </div>
         @endif
 
-        <!-- Main Content Section -->
+>
         <div class="row g-4">
-            <!-- Student Information Card -->
+
             <div class="col-lg-6">
                 <div class="card shadow-sm h-100 border-0 rounded-3">
                     <div class="card-header bg-white border-bottom-0 rounded-top-3 py-3">
@@ -98,7 +98,7 @@
                             </div>
                         </div>
                         
-                        <!-- Payment Button (only show if balance exists) -->
+
                         @if($balance > 0)
                         <div class="d-grid mt-4">
                             <button class="btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#paymentModal">
@@ -116,7 +116,7 @@
                 </div>
             </div>
            
-            <!-- Barcode Scanner Card -->
+
             <div class="col-lg-6">
                 <div class="card shadow-sm h-100 border-0 rounded-3">
                     <div class="card-header bg-white border-bottom-0 rounded-top-3 py-3">
@@ -145,12 +145,12 @@
         </div>
     </div>
 
-    <!-- Payment Modal -->
+
 @if(isset($student) && ($student->program->fee - $student->payments->sum('amount') > 0))
 <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered"> <!-- Changed to modal-xl for wider layout -->
+    <div class="modal-dialog modal-xl modal-dialog-centered"> 
         <div class="modal-content border-0 shadow-lg">
-            <!-- Modal Header -->
+            
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title" id="paymentModalLabel">
                     <i class="bi bi-credit-card me-2"></i>Process Payment for {{ $student->name }}
@@ -159,14 +159,14 @@
             </div>
             
 
-            <!-- Modal Body -->
+          
             <div class="modal-body">
                 <form id="paymentForm" method="POST" action="{{ route('process-payment')}}">
                     @csrf
                     <input type="hidden" name="student_id" value="{{ $student->id }}">
                     <input type="hidden" name="cashier_id" value="{{ auth()->user()->id }}">
 
-                    <!-- Payment Information -->
+                 
                     <div class="mb-4">
                         <h6 class="text-primary mb-3"><i class="bi bi-cash-stack me-2"></i>Payment Information</h6>
                         <div class="row g-3">
@@ -219,7 +219,7 @@
                         </div>
                     </div>
 
-                    <!-- Reference Information -->
+             
                     <div class="mb-4">
                         <h6 class="text-primary mb-3"><i class="bi bi-receipt me-2"></i>Reference</h6>
                         <div class="row g-3">
@@ -241,7 +241,7 @@
                         </div>
                     </div>
 
-                    <!-- Submit Button -->
+                   
                     <div class="d-grid">
                         <button type="submit" class="btn btn-success btn-lg">
                             <i class="bi bi-check-circle me-2"></i>Confirm and Submit Payment
@@ -256,7 +256,7 @@
 
 </div>
 
-// <!-- Scanner Script -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -306,7 +306,7 @@
                     document.getElementById("barcode").value = code;
                     stopScanner();
                     
-                    // Optional: Auto-submit the form
+                  
                     document.querySelector('form[action="/scan"]').submit();
                 }
             });
@@ -324,7 +324,7 @@
         startButton.addEventListener('click', initializeScanner);
         stopButton.addEventListener('click', stopScanner);
 
-        // Clean up when leaving page
+      
         window.addEventListener('beforeunload', stopScanner);
     });
 
@@ -337,7 +337,7 @@
         `;
         document.querySelector('.scanner-controls').prepend(alertDiv);
     }
-    // Payment Generation Logic
+   
     document.addEventListener('DOMContentLoaded', function () {
     const paymentMethod = document.getElementById('payment_method');
     const referenceInput = document.getElementById('reference');
@@ -354,15 +354,15 @@
         }
     }
 
-    // Listen for changes to the payment method
+   
     paymentMethod.addEventListener('change', toggleReferenceRequirement);
 
-    // On form submit, generate 5-digit reference if needed
+  
     form.addEventListener('submit', function (e) {
         const method = paymentMethod.value;
         const refValue = referenceInput.value.trim();
 
-        // If not cash and no reference, generate one
+    
         if (refValue === '') {
             const randomRef = Math.floor(10000 + Math.random() * 90000);
             referenceInput.value = randomRef;
@@ -486,9 +486,9 @@
     }
 </style>
 
-<!-- Bootstrap Icons -->
+
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 
-<!-- Bootstrap JS Bundle with Popper -->
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 @endsection

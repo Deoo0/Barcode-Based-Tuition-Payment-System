@@ -27,23 +27,10 @@
     <section class="login-section" aria-label="Login form">
       <form class="login-form" id="loginForm" action="/login" method="POST" novalidate>
         @csrf
-        {{-- User Icon --}}
         <div class="user-avatar">
           <img src="{{ asset('images/user.png') }}" alt="User profile icon" width="60" height="60">
         </div>
 
-        {{-- Display validation errors --}}
-        {{-- @if ($errors->any())
-          <div class="alert alert-danger">
-            <ul class="mb-0">
-              @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-              @endforeach
-            </ul>
-          </div>
-        @endif --}}
-
-        {{-- Username --}}
         <div class="form-floating mb-3">
           <input type="text" name="Username" value="{{ old('loginusername') }}" autocomplete="username" class="form-control" id="floatingInput" placeholder="username"  style="min-width: 350px;">
           <label for="floatingInput">Username</label>
@@ -52,7 +39,6 @@
           @enderror
         </div>
 
-        {{-- Password --}}
         <div class="form-floating">
           <input type="password" name="Password" autocomplete="current-password" class="form-control" id="floatingPassword" placeholder="password"  style="min-width: 350px;">
           <label for="floatingPassword">Password</label>
@@ -61,18 +47,8 @@
           @enderror
         </div>
 
-        {{-- Show Password (optional JS toggle logic) --}}
-        {{-- 
-        <div class="password-toggle">
-          <input type="checkbox" id="togglePassword" name="togglePassword" onchange="displayPw()">
-          <label for="togglePassword">Show Password</label>
-        </div>
-        --}}
-
-        {{-- Submit --}}
         <button type="submit" class="btn btn-primary w-100 mt-3">Login</button>
 
-        {{-- Forgot Password link --}}
         <div class="form-footer mt-3 text-center">
           <a href="#forgot-password" class="forgot-password">Forgot Password?</a>
         </div>

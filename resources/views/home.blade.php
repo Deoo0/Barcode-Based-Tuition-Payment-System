@@ -5,7 +5,6 @@
 @section('content')
 <div class="container-fluid">
     <div class="row g-4">
-        <!-- Hero Section -->
         <div class="p-5 mb-4 hero-banner text-white rounded-3 shadow d-flex align-items-center">
             <div class="container text-center blurred-box p-4 rounded">
                 <h1 class="display-4 fw-bold">Welcome to the Student Tuition Payment System</h1>
@@ -18,7 +17,7 @@
         
         <style>
             .hero-banner {
-                background-image: url('{{ asset('images/payment-bg.jpg') }}'); /* Replace with your image */
+                background-image: url('{{ asset('images/payment-bg.jpg') }}');
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;
@@ -27,14 +26,13 @@
             }
 
             .blurred-box {
-                background: rgba(0, 0, 0, 0.4); /* Semi-transparent black */
-                backdrop-filter: blur(6px); /* Blur effect */
+                background: rgba(0, 0, 0, 0.4); 
+                backdrop-filter: blur(6px); 
                 -webkit-backdrop-filter: blur(6px);
                 color: white;
             }
         </style>
 
-        <!-- Features Section -->
         <div class="col-12">
             <div class="row text-center">
                 <div class="col-md-4">
@@ -67,7 +65,6 @@
             </div>
         </div>
 
-        <!-- Call to Action -->
         <div class="col-12 mt-5">
             <div class="text-center">
                 <h2 class="mb-4">Start Managing Your Payments Today</h2>
