@@ -258,75 +258,56 @@
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const startButton = document.getElementById("start-scanning");
-        const stopButton = document.getElementById("stop-scanning");
-        let scannerActive = false;
+    const startButton = document.getElementById("start-scanning");
+    const stopButton = document.getElementById("stop-scanning");
+    let qrScanner;
 
-        function initializeScanner() {
-            Quagga.init({
-                inputStream: {
-                    name: "Live",
-                    type: "LiveStream",
-                    target: document.querySelector('#scanner-container'),
-                    constraints: {
-                        facingMode: "environment",
-                        aspectRatio: { min: 1, max: 2 },
-                        frameRate: { ideal: 30 }
-                    },
-                },
-                decoder: {
-                    readers: ["code_128_reader", "ean_reader", "ean_8_reader"],
-                    multiple: false
-                },
-                locator: {
-                    patchSize: "medium",
-                    halfSample: true
-                },
-                locate: true,
-                numOfWorkers: navigator.hardwareConcurrency || 4,
-                frequency: 10
-            }, function(err) {
-                if (err) {
-                    console.error("Scanner initialization failed:", err);
-                    showError("Failed to initialize scanner. Please check camera permissions.");
-                    return;
-                }
-                Quagga.start();
-                scannerActive = true;
-                startButton.classList.add('d-none');
-                stopButton.classList.remove('d-none');
-            });
+    function initializeScanner() {
+        qrScanner = new Html5Qrcode("scanner-container");
+        const config = { fps: 10, qrbox: 250 };
 
-            Quagga.onDetected(function(result) {
-                if (result && result.codeResult) {
-                    const code = result.codeResult.code;
-                    console.log("Barcode detected:", code);
-                    document.getElementById("barcode").value = code;
-                    stopScanner();
-                    
-                  
-                    document.querySelector('form[action="/scan"]').submit();
-                }
-            });
-        }
- 
-        function stopScanner() {
-            if (scannerActive) {
-                Quagga.stop();
-                scannerActive = false;
-                startButton.classList.remove('d-none');
-                stopButton.classList.add('d-none');
+        qrScanner.start(
+            { facingMode: "environment" },
+            config,
+            (decodedText, decodedResult) => {
+                console.log("QR Code detected:", decodedText);
+                document.getElementById("barcode").value = decodedText;
+                stopScanner();
+                document.querySelector('form[action="/scan"]').submit();
+            },
+            (errorMessage) => {
+                // Optionally handle scan failure
             }
+        ).then(() => {
+            startButton.classList.add("d-none");
+            stopButton.classList.remove("d-none");
+        }).catch(err => {
+            console.error("Failed to start scanner:", err);
+            showError("Failed to start QR scanner. Check camera access.");
+        });
+    }
+
+    function stopScanner() {
+        if (qrScanner) {
+            qrScanner.stop().then(() => {
+                startButton.classList.remove("d-none");
+                stopButton.classList.add("d-none");
+                qrScanner.clear();
+            }).catch(err => {
+                console.error("Failed to stop scanner:", err);
+            });
         }
+    }
 
-        startButton.addEventListener('click', initializeScanner);
-        stopButton.addEventListener('click', stopScanner);
+    startButton.addEventListener("click", initializeScanner);
+    stopButton.addEventListener("click", stopScanner);
+    window.addEventListener("beforeunload", stopScanner);
+});
 
-      
-        window.addEventListener('beforeunload', stopScanner);
-    });
+
 
     function showError(message) {
         const alertDiv = document.createElement('div');
