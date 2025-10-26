@@ -51,8 +51,16 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="name" class="form-label">Full Name</label>
-                                <input type="text" name="name" id="name" class="form-control" placeholder="Family Name, First Name, Middle Name" required>
+                                <label for="name" class="form-label">First Name</label>
+                                <input type="text" name="first_name" id="first_name" class="form-control" placeholder="Enter First Name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Last Name</label>
+                                <input type="text" name="last_name" id="last_name" class="form-control" placeholder="Enter Last Name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Middle Name</label>
+                                <input type="text" name="middle_name" id="middle_name" class="form-control" placeholder="Enter Middle Name" required>
                             </div>
 
                             <div class="col-md-6">
@@ -101,7 +109,9 @@
                     <thead class="table-light">
                         <tr>
                             <th>Student No.</th>
-                            <th>Name</th>
+                            <th>Last name</th>
+                            <th>First name</th>
+                            <th>Middle name</th>
                             <th>Program</th>
                             <th>Phone</th>
                             <th>Address</th>
@@ -113,7 +123,9 @@
                         @forelse ($students as $student)
                         <tr>
                             <td>{{ $student->student_number }}</td>
-                            <td>{{ $student->name }}</td>
+                            <td>{{ $student->last_name }}</td>
+                            <td>{{ $student->first_name }}</td>
+                            <td>{{ $student->middle_name }}</td>
                             <td>{{ $student->program->name }}</td>
                             <td>{{ $student->phone }}</td>
                             <td>{{ $student->address }}</td>

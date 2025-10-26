@@ -28,7 +28,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/addStudent',[StudentController::class,'addUser'])->name('addUser');
     Route::get('/edit-user/{user}',[UserController::class,'showEditScreen']);
     Route::put('/edit-user/{id}',[UserController::class,'updateUserInfo']);
-    Route::post('/scan', [StudentController::class, 'scan'])->name('scan');
+    Route::get('/scan', [StudentController::class, 'scan'])->name('scan');
     Route::post('/process-payment', [PaymentController::class, 'payment'])->name('process-payment');
     Route::get('/students/search', [StudentController::class, 'search'])->name('students.search');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

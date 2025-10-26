@@ -17,14 +17,14 @@
                 <h5 class="mb-0"><i class="bi bi-upc-scan me-2"></i>Student Identification</h5>
             </div>
             <div class="card-body p-4">
-                <form method="POST" action="{{ route('scan') }}">
+                <form method="GET" action="{{ route('scan') }}">
                     @csrf
                     <div class="input-group input-group-lg">
                         <span class="input-group-text bg-light"><i class="bi bi-person-badge"></i></span>
                         <input type="text" class="form-control form-control-lg" 
-                               name="barcode" id="barcode" 
-                               placeholder="Scan or enter student ID" 
-                               autofocus>
+                            name="barcode" id="barcode" 
+                            placeholder="Scan or enter student ID" 
+                            autofocus>
                         <button type="submit" class="btn btn-primary px-4">
                             <i class="bi bi-search me-2"></i>Search
                         </button>
@@ -275,11 +275,12 @@
             (decodedText, decodedResult) => {
                 console.log("QR Code detected:", decodedText);
                 document.getElementById("barcode").value = decodedText;
-                stopScanner();
                 document.querySelector('form[action="/scan"]').submit();
+                console.log("submitted search request", decodedText);
+                stopScanner();
             },
             (errorMessage) => {
-                // Optionally handle scan failure
+                // showError(errorMessage);
             }
         ).then(() => {
             startButton.classList.add("d-none");

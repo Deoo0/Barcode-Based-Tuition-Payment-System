@@ -21,7 +21,9 @@ class StudentController extends Controller
     public function addUser(Request $request){
         $validated = $request->validate([
             'student_number' => 'required',
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'middle_name' => 'string|max:255',
             'phone' => 'required',
             'email' => 'required|email',
             'address' => 'required',
@@ -30,7 +32,9 @@ class StudentController extends Controller
     
         Student::create([
             'student_number' => $validated['student_number'],
-            'name' => $validated['name'],
+            'first_name' => $validated['first_name'],
+            'last_name' => $validated['last_name'],
+            'middle_name' => $validated['middle_name'],
             'phone' => $validated['phone'],
             'email' => $validated['email'],
             'address' => $validated['address'],
@@ -44,9 +48,9 @@ class StudentController extends Controller
         {
             $barcode = $request->input('barcode');
             $student = Student::where('student_number', $barcode)->first();
-            $studentName = Student::where('name', $barcode)->first();
+            $studentName = Student::where('last_name', $barcode)->first();
 
-            if ($student) {
+            if ($student || $studentName) {
                 return view('payment', compact('student'))
                     ->with('success', 'Student barcode scanned successfully.');
             } else {
