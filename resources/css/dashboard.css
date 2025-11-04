@@ -1,0 +1,41 @@
+ .stat-card {
+        transition: all 0.3s ease;
+        border-left: 4px solid;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .stat-card.primary {
+        border-left-color: #4e73df;
+    }
+    .stat-card.success {
+        border-left-color: #1cc88a;
+    }
+    .stat-card.info {
+        border-left-color: #36b9cc;
+    }
+    .stat-card.warning {
+        border-left-color: #f6c23e;
+    }
+    .progress-sm {
+        height: 0.5rem;
+    }
+    .activity-item {
+        position: relative;
+        padding-left: 1.5rem;
+        border-left: 1px solid #e3e6f0;
+    }
+    .activity-item:before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -6px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #e3e6f0;
+    }
+    .activity-item.active:before {
+        background: #4e73df;
+    }

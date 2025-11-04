@@ -2,51 +2,6 @@
 
 @section('title', 'Admin Dashboard')
 
-@section('styles')
-<style>
-    .stat-card {
-        transition: all 0.3s ease;
-        border-left: 4px solid;
-    }
-    .stat-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    }
-    .stat-card.primary {
-        border-left-color: #4e73df;
-    }
-    .stat-card.success {
-        border-left-color: #1cc88a;
-    }
-    .stat-card.info {
-        border-left-color: #36b9cc;
-    }
-    .stat-card.warning {
-        border-left-color: #f6c23e;
-    }
-    .progress-sm {
-        height: 0.5rem;
-    }
-    .activity-item {
-        position: relative;
-        padding-left: 1.5rem;
-        border-left: 1px solid #e3e6f0;
-    }
-    .activity-item:before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -6px;
-        width: 12px;
-        height: 12px;
-        border-radius: 50%;
-        background: #e3e6f0;
-    }
-    .activity-item.active:before {
-        background: #4e73df;
-    }
-</style>
-@endsection
 
 @section('content')
 <div class="container-fluid">
@@ -248,88 +203,14 @@
     </div>
 </div>
 @endsection
+@push('scripts')
+<script type="module" src="{{Vite::asset('resources/js/dashboard.js')}}" ></script>
+@endpush
+
+@push('css')
+<link rel="stylesheet" href="{{Vite::asset('resources/css/dashboard.css')}}">
+@endpush
 
 @section('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
-    const revenueChart = new Chart(ctxRevenue, {
-        type: 'line',
-        data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-            datasets: [{
-                label: 'Revenue',
-                data: [120000, 190000, 300000, 500000, 200000],
-                backgroundColor: 'rgba(78, 115, 223, 0.05)',
-                borderColor: 'rgba(78, 115, 223, 1)',
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            }
-        }
-    });
-
-    const ctxMethods = document.getElementById('paymentMethodsChart').getContext('2d');
-    const paymentChart = new Chart(ctxMethods, {
-        type: 'doughnut',
-        data: {
-            labels: ['Cash', 'Credit Card', 'Bank Transfer'],
-            datasets: [{
-                data: [55, 30, 15],
-                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-                hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf']
-            }]
-        },
-        options: {
-            cutout: '70%',
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom'
-                }
-            }
-        }
-    });
-
-    const paymentLabels = @json(array_keys($paymentData->toArray()));
-    const paymentValues = @json(array_values($paymentData->toArray()));
-
-    const ctx = document.getElementById('paymentMethodsChart').getContext('2d');
-    const paymentMethodsChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: paymentLabels,
-            datasets: [{
-                data: paymentData,
-                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-                hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
-                hoverBorderColor: "rgba(234, 236, 244, 1)",
-            }],
-        },
-        options: {
-            maintainAspectRatio: false,
-            tooltips: {
-                backgroundColor: "rgb(255,255,255)",
-                bodyFontColor: "#858796",
-                borderColor: '#dddfeb',
-                borderWidth: 1,
-                xPadding: 15,
-                yPadding: 15,
-                displayColors: false,
-                caretPadding: 10,
-            },
-            legend: {
-                display: false
-            },
-            cutoutPercentage: 60,
-        },
-    });
-
-</script>
 @endsection

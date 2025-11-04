@@ -26,7 +26,6 @@ class UsertypeFactory extends Factory
     {
         return [
             'name' => $this->faker->word(),
-            // Add other fields as needed
         ];
     }
 }

@@ -17,13 +17,13 @@
                 <h5 class="mb-0"><i class="bi bi-upc-scan me-2"></i>Student Identification</h5>
             </div>
             <div class="card-body p-4">
-                <form method="GET" action="{{ route('scan') }}">
+                <form method="GET" action="/scan">
                     @csrf
                     <div class="input-group input-group-lg">
                         <span class="input-group-text bg-light"><i class="bi bi-person-badge"></i></span>
-                        <input type="text" class="form-control form-control-lg" 
-                            name="barcode" id="barcode" 
-                            placeholder="Scan or enter student ID" 
+                        <input type="text" class="form-control form-control-lg"
+                            name="barcode" id="barcode"
+                            placeholder="Enter student ID "
                             autofocus>
                         <button type="submit" class="btn btn-primary px-4">
                             <i class="bi bi-search me-2"></i>Search
@@ -35,22 +35,21 @@
 
 
         @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
-                <i class="bi bi-check-circle-fill me-2 fs-4"></i>
-                <div>{{ session('success') }}</div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
+            <i class="bi bi-check-circle-fill me-2 fs-4"></i>
+            <div>{{ session('success') }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
         @endif
 
         @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
-                <div>{{ session('error') }}</div>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
+        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2 fs-4"></i>
+            <div>{{ session('error') }}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
         @endif
 
->
         <div class="row g-4">
 
             <div class="col-lg-6">
@@ -62,7 +61,7 @@
                     </div>
                     <div class="card-body">
                         @if(isset($student))
-                        
+
                         <div class="student-details-grid">
                             <div class="detail-item">
                                 <span class="detail-label">Student ID</span>
@@ -70,7 +69,7 @@
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Full Name</span>
-                                <span class="detail-value">{{ $student->name }}</span>
+                                <span class="detail-value">{{ $student->last_name }}, {{ $student->first_name }}</span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Program</span>
@@ -85,7 +84,7 @@
                                 <span class="detail-value">₱{{ number_format($student->program->fee, 2) }}</span>
                             </div>
                             @php
-                                $balance = $student->program->fee - $student->payments->sum('amount');
+                            $balance = $student->program->fee - $student->payments->sum('amount');
                             @endphp
                             <div class="detail-item">
                                 <span class="detail-label">Balance</span>
@@ -93,11 +92,11 @@
                                     ₱{{ number_format($balance, 2) }}
                                     @if($balance <= 0)
                                         <span class="badge bg-success ms-2">Paid in Full</span>
-                                    @endif
+                                @endif
                                 </span>
                             </div>
                         </div>
-                        
+
 
                         @if($balance > 0)
                         <div class="d-grid mt-4">
@@ -115,7 +114,7 @@
                     </div>
                 </div>
             </div>
-           
+
 
             <div class="col-lg-6">
                 <div class="card shadow-sm h-100 border-0 rounded-3">
@@ -146,328 +145,127 @@
     </div>
 
 
-@if(isset($student) && ($student->program->fee - $student->payments->sum('amount') > 0))
-<div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-centered"> 
-        <div class="modal-content border-0 shadow-lg">
-            
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="paymentModalLabel">
-                    <i class="bi bi-credit-card me-2"></i>Process Payment for {{ $student->name }}
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            
+    @if(isset($student) && ($student->program->fee - $student->payments->sum('amount') > 0))
+    <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
 
-          
-            <div class="modal-body">
-                <form id="paymentForm" method="POST" action="{{ route('process-payment')}}">
-                    @csrf
-                    <input type="hidden" name="student_id" value="{{ $student->id }}">
-                    <input type="hidden" name="cashier_id" value="{{ auth()->user()->id }}">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="paymentModalLabel">
+                        <i class="bi bi-credit-card me-2"></i>Process Payment for {{ $student->name }}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
 
-                 
-                    <div class="mb-4">
-                        <h6 class="text-primary mb-3"><i class="bi bi-cash-stack me-2"></i>Payment Information</h6>
-                        <div class="row g-3">
-                            <div class="col-md-6 col-lg-4">
-                                <label for="amount" class="form-label">Amount*</label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light">₱</span>
-                                    <input type="number" class="form-control" 
-                                        id="amount" name="amount" 
-                                        min="1" 
-                                        max="{{ $student->program->fee - $student->payments->sum('amount') }}" 
-                                        step="0.01" required>
+
+
+                <div class="modal-body">
+                    <form id="paymentForm" method="POST" action="{{ route('process-payment')}}">
+                        @csrf
+                        <input type="hidden" name="student_id" value="{{ $student->id }}">
+                        <input type="hidden" name="cashier_id" value="{{ auth()->user()->id }}">
+
+
+                        <div class="mb-4">
+                            <h6 class="text-primary mb-3"><i class="bi bi-cash-stack me-2"></i>Payment Information</h6>
+                            <div class="row g-3">
+                                <div class="col-md-6 col-lg-4">
+                                    <label for="amount" class="form-label">Amount*</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light">₱</span>
+                                        <input type="number" class="form-control"
+                                            id="amount" name="amount"
+                                            min="1"
+                                            max="{{ $student->program->fee - $student->payments->sum('amount') }}"
+                                            step="0.01" required>
+                                    </div>
+                                    <small class="text-muted">Max: ₱{{ number_format($student->program->fee - $student->payments->sum('amount'), 2) }}</small>
                                 </div>
-                                <small class="text-muted">Max: ₱{{ number_format($student->program->fee - $student->payments->sum('amount'), 2) }}</small>
-                            </div>
 
-                            <div class="col-md-6 col-lg-4">
-                                <label for="term" class="form-label">Term*</label>
-                                <select class="form-select" name="term" required>
-                                    <option value="" selected disabled>Select Term</option>
-                                    <option value="Paid">Initial</option>
-                                    <option value="Prelim">Prelim</option>
-                                    <option value="Midterms">Midterms</option>
-                                    <option value="Prefinal">Prefinal</option>
-                                    <option value="Finals">Finals</option>
-                                </select>
-                            </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <label for="term" class="form-label">Term*</label>
+                                    <select class="form-select" name="term" required>
+                                        <option value="" selected disabled>Select Term</option>
+                                        <option value="Paid">Initial</option>
+                                        <option value="Prelim">Prelim</option>
+                                        <option value="Midterms">Midterms</option>
+                                        <option value="Prefinal">Prefinal</option>
+                                        <option value="Finals">Finals</option>
+                                    </select>
+                                </div>
 
-                            <div class="col-md-6 col-lg-4">
-                                <label for="status" class="form-label">Status*</label>
-                                <select class="form-select" name="status" required>
-                                    <option value="" selected disabled>Select Status</option>
-                                    <option value="Paid">Initial</option>
-                                    <option value="Paid">Paid</option>
-                                    <option value="Partial">Partial</option>
-                                    <option value="Pending">Pending</option>
-                                </select>
-                            </div>
+                                <div class="col-md-6 col-lg-4">
+                                    <label for="status" class="form-label">Status*</label>
+                                    <select class="form-select" name="status" required>
+                                        <option value="" selected disabled>Select Status</option>
+                                        <option value="Paid">Initial</option>
+                                        <option value="Paid">Paid</option>
+                                        <option value="Partial">Partial</option>
+                                        <option value="Pending">Pending</option>
+                                    </select>
+                                </div>
 
-                            <div class="col-md-6 col-lg-4">
-                                <label for="payment_method" class="form-label">Payment Method*</label>
-                                <select class="form-select" id="payment_method" name="payment_method" required>
-                                    <option value="" selected disabled>Select Method</option>
-                                    <option value="cash">Cash</option>
-                                    <option value="credit_card">Credit Card</option>
-                                    <option value="bank_transfer">Bank Transfer</option>
-                                    <option value="online">Online Payment</option>
-                                </select>
+                                <div class="col-md-6 col-lg-4">
+                                    <label for="payment_method" class="form-label">Payment Method*</label>
+                                    <select class="form-select" id="payment_method" name="payment_method" required>
+                                        <option value="" selected disabled>Select Method</option>
+                                        <option value="cash">Cash</option>
+                                        <option value="credit_card">Credit Card</option>
+                                        <option value="bank_transfer">Bank Transfer</option>
+                                        <option value="online">Online Payment</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-             
-                    <div class="mb-4">
-                        <h6 class="text-primary mb-3"><i class="bi bi-receipt me-2"></i>Reference</h6>
-                        <div class="row g-3">
-                            <div class="col-12 col-md-6">
-                                <label for="reference" class="form-label">Official Receipt No.</label>
-                                <input type="text" class="form-control" id="reference" name="reference" placeholder="Enter transaction OR No.">
-                                <small class="text-muted">Required for non-cash payments</small>
-                            </div>
-                            <div class="col-12 col-md-6">
-                                <label for="payment_date" class="form-label">Payment Date</label>
-                                <input type="date" class="form-control" name="payment_date" value="{{ date('Y-m-d') }}" required>
+
+                        <div class="mb-4">
+                            <h6 class="text-primary mb-3"><i class="bi bi-receipt me-2"></i>Reference</h6>
+                            <div class="row g-3">
+                                <div class="col-12 col-md-6">
+                                    <label for="reference" class="form-label">Official Receipt No.</label>
+                                    <input type="text" class="form-control" id="reference" name="reference" placeholder="Enter transaction OR No.">
+                                    <small class="text-muted">Required for non-cash payments</small>
+                                </div>
+                                <div class="col-12 col-md-6">
+                                    <label for="payment_date" class="form-label">Payment Date</label>
+                                    <input type="date" class="form-control" name="payment_date" value="{{ date('Y-m-d') }}" required>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="balance-summary p-3 bg-light rounded-2 mb-4">
-                        <div class="d-flex justify-content-between">
-                            <span class="text-muted">Current Balance:</span>
-                            <strong>₱{{ number_format($student->program->fee - $student->payments->sum('amount'), 2) }}</strong>
+                        <div class="balance-summary p-3 bg-light rounded-2 mb-4">
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Current Balance:</span>
+                                <strong>₱{{ number_format($student->program->fee - $student->payments->sum('amount'), 2) }}</strong>
+                            </div>
                         </div>
-                    </div>
 
-                   
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-success btn-lg">
-                            <i class="bi bi-check-circle me-2"></i>Confirm and Submit Payment
-                        </button>
-                    </div>
-                </form>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>Confirm and Submit Payment
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
-@endif
+    @endif
 
 </div>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const startButton = document.getElementById("start-scanning");
-    const stopButton = document.getElementById("stop-scanning");
-    let qrScanner;
 
-    function initializeScanner() {
-        qrScanner = new Html5Qrcode("scanner-container");
-        const config = { fps: 10, qrbox: 250 };
+@push('scripts')
+<script type="module" src="{{Vite::asset('resource/js/payment.js')}}"></script>
+@endpush
 
-        qrScanner.start(
-            { facingMode: "environment" },
-            config,
-            (decodedText, decodedResult) => {
-                console.log("QR Code detected:", decodedText);
-                document.getElementById("barcode").value = decodedText;
-                document.querySelector('form[action="/scan"]').submit();
-                console.log("submitted search request", decodedText);
-                stopScanner();
-            },
-            (errorMessage) => {
-                // showError(errorMessage);
-            }
-        ).then(() => {
-            startButton.classList.add("d-none");
-            stopButton.classList.remove("d-none");
-        }).catch(err => {
-            console.error("Failed to start scanner:", err);
-            showError("Failed to start QR scanner. Check camera access.");
-        });
-    }
-
-    function stopScanner() {
-        if (qrScanner) {
-            qrScanner.stop().then(() => {
-                startButton.classList.remove("d-none");
-                stopButton.classList.add("d-none");
-                qrScanner.clear();
-            }).catch(err => {
-                console.error("Failed to stop scanner:", err);
-            });
-        }
-    }
-
-    startButton.addEventListener("click", initializeScanner);
-    stopButton.addEventListener("click", stopScanner);
-    window.addEventListener("beforeunload", stopScanner);
-});
-
-
-
-    function showError(message) {
-        const alertDiv = document.createElement('div');
-        alertDiv.className = 'alert alert-danger mt-3';
-        alertDiv.innerHTML = `
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-            ${message}
-        `;
-        document.querySelector('.scanner-controls').prepend(alertDiv);
-    }
-   
-    document.addEventListener('DOMContentLoaded', function () {
-    const paymentMethod = document.getElementById('payment_method');
-    const referenceInput = document.getElementById('reference');
-    const form = document.getElementById('paymentForm');
-
-    function toggleReferenceRequirement() {
-        const method = paymentMethod.value;
-        const status = document.querySelector('select[name="status"]').value;
-
-        if (method === 'cash' || status === 'Partial') {
-            referenceInput.removeAttribute('required');
-        } else {
-            referenceInput.setAttribute('required', 'required');
-        }
-    }
-
-   
-    paymentMethod.addEventListener('change', toggleReferenceRequirement);
-
-  
-    form.addEventListener('submit', function (e) {
-        const method = paymentMethod.value;
-        const refValue = referenceInput.value.trim();
-
-    
-        if (refValue === '') {
-            const randomRef = Math.floor(10000 + Math.random() * 90000);
-            referenceInput.value = randomRef;
-        }
-    });
-});
-</script>
-
-<style>
-    .payment-portal-container {
-        background-color: #f8f9fa;
-        min-height: 100vh;
-    }
-    
-    .card {
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    
-    .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1) !important;
-    }
-    
-    .student-details-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1.25rem;
-    }
-    
-    .detail-item {
-        background-color: #f8f9fa;
-        padding: 1rem;
-        border-radius: 0.5rem;
-    }
-    
-    .detail-label {
-        display: block;
-        font-size: 0.875rem;
-        color: #6c757d;
-        margin-bottom: 0.25rem;
-    }
-    
-    .detail-value {
-        font-weight: 500;
-        font-size: 1.05rem;
-        color: #212529;
-    }
-    
-    .scanner-wrapper {
-        position: relative;
-        width: 100%;
-        aspect-ratio: 4/3;
-        background-color: #000;
-        border-radius: 0.5rem;
-        overflow: hidden;
-    }
-    
-    .scanner-viewport {
-        width: 100%;
-        height: 100%;
-    }
-    
-    .scanner-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .scanner-guide {
-        width: 80%;
-        height: 2px;
-        background-color: rgba(255, 0, 0, 0.5);
-        box-shadow: 0 0 10px rgba(255, 0, 0, 0.7);
-        animation: scan 2s infinite linear;
-    }
-    
-    @keyframes scan {
-        0% { transform: translateY(-100%); }
-        100% { transform: translateY(100%); }
-    }
-    
-    .scanner-controls {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-    
-    .form-control-lg, .btn-lg, .form-select-lg {
-        padding: 0.75rem 1.25rem;
-        font-size: 1.1rem;
-    }
-    
-    .input-group-text {
-        background-color: #f8f9fa;
-    }
-    .payment-section {
-        padding: 1rem;
-        border-radius: 0.5rem;
-        background-color: #f8f9fa;
-    }
-    
-    .section-title {
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        font-weight: 600;
-    }
-    
-    .balance-summary {
-        border-left: 4px solid #0d6efd;
-    }
-    
-    .form-select, .form-control {
-        padding: 0.5rem 1rem;
-    }
-</style>
-
+@push('styles')
+<link rel="stylesheet" href="{{Vite::asset('resource/css/payment.css')}}">
+@endpush
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 

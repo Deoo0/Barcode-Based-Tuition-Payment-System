@@ -14,10 +14,10 @@
                 </a>
             </div>
         </div>
-        
+
         <style>
             .hero-banner {
-                background-image: url('{{ asset('images/payment-bg.jpg') }}');
+                background-image: url('{{ asset(' images/payment-bg.jpg') }}');
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;
@@ -26,8 +26,8 @@
             }
 
             .blurred-box {
-                background: rgba(0, 0, 0, 0.4); 
-                backdrop-filter: blur(6px); 
+                background: rgba(0, 0, 0, 0.4);
+                backdrop-filter: blur(6px);
                 -webkit-backdrop-filter: blur(6px);
                 color: white;
             }

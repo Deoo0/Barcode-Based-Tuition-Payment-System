@@ -12,9 +12,9 @@
             </h2>
             <p class="text-muted mb-0">View and manage all payment transactions</p>
         </div>
-        
+
         <div class="d-flex flex-column flex-md-row gap-2 w-100 w-md-auto">
-            
+
         </div>
     </div>
 
@@ -35,7 +35,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
@@ -51,7 +51,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
@@ -67,7 +67,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-md-3">
             <div class="card border-0 shadow-sm h-100">
                 <div class="card-body">
@@ -115,7 +115,7 @@
                                         </div>
                                     </div>
                                     <div class="flex-grow-1 ms-3">
-                                        <h6 class="mb-0">{{ $transaction->student->name }}</h6>
+                                        <h6 class="mb-0">{{ $transaction->student->first_name }}, {{ $transaction->student->last_name }}</h6>
                                         <small class="text-muted">{{ $transaction->student->student_number }}</small>
                                     </div>
                                 </div>
@@ -180,15 +180,17 @@
                     </tbody>
                 </table>
             </div>
-            
-    
+
+
             @if($transactions->hasPages())
-            <div class="card-footer bg-white border-0 py-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="text-muted">
+            <div class="border-top bg-white px-4 py-3">
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-3">
+                    <div class="text-muted small">
                         Showing {{ $transactions->firstItem() }} to {{ $transactions->lastItem() }} of {{ $transactions->total() }} entries
                     </div>
-                    {{ $transactions->links() }}
+                    <div>
+                        {{ $transactions->links() }}
+                    </div>
                 </div>
             </div>
             @endif
@@ -197,27 +199,6 @@
 </div>
 @endsection
 
-@section('styles')
-<style>
-    .table th {
-        font-weight: 600;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        letter-spacing: 0.5px;
-        color: #6c757d;
-    }
-    
-    .table td {
-        vertical-align: middle;
-    }
-    
-    .badge.bg-light {
-        color: #495057 !important;
-        border: 1px solid #dee2e6;
-    }
-    
-    .dropdown-toggle::after {
-        display: none;
-    }
-</style>
-@endsection
+@push('styles')
+<link rel="stylesheet" href="{{Vite::asset('resources/css/transaction.css')}}">
+@endpush

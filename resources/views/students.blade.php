@@ -14,18 +14,18 @@
         <div class="card-body">
             <form action="{{ route('students.search') }}" method="GET">
                 <div class="input-group">
-                    <input type="text" 
-                           name="search" 
-                           class="form-control" 
-                           placeholder="Search by name, student number, phone or program..."
-                           value="{{ request('search') }}">
+                    <input type="text"
+                        name="search"
+                        class="form-control"
+                        placeholder="Search by name, student number, phone or program..."
+                        value="{{ request('search') }}">
                     <button class="btn btn-primary" type="submit">
                         <i class="bi bi-search"></i> Search
                     </button>
                     @if(request('search'))
-                        <a href="{{ route('students.search') }}" class="btn btn-outline-secondary">
-                            <i class="bi bi-x"></i> Clear
-                        </a>
+                    <a href="{{ route('students.search') }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-x"></i> Clear
+                    </a>
                     @endif
                 </div>
             </form>
@@ -136,13 +136,13 @@
                                     <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewStudentModal{{ $student->id }}">
                                         <i class="bi bi-search"></i> View
                                     </button>
-        
-                        
+
+
                                     <div class="modal fade" id="viewStudentModal{{ $student->id }}" tabindex="-1" aria-labelledby="viewStudentModalLabel{{ $student->id }}" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header">
-                                                    <h5 class="modal-title" id="viewStudentModalLabel{{ $student->id }}">Student Details - {{ $student->name }}</h5>
+                                                    <h5 class="modal-title" id="viewStudentModalLabel{{ $student->id }}">Student Details - {{ $student->last_name }}, {{ $student->first_name }}</h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
                                                 <div class="modal-body">
@@ -153,7 +153,7 @@
                                                         <p class="mb-0">Total Tuition: ₱{{ number_format($student->program->fee, 2) }}</p>
                                                         <p>Total Paid: ₱{{ number_format($student->payments->sum('amount'), 2) }}</p>
                                                     </div>
-                                                    
+
                                                     <h5 class="mb-3">Payment History</h5>
                                                     <table class="table table-hover table-bordered align-middle">
                                                         <thead class="table-primary">
@@ -195,21 +195,20 @@
                                             </div>
                                         </div>
                                     </div>
-        
+
                                     @if (Auth::check() && Auth::user()->usertype->id == 1)
-                        
-                                        <button class="btn btn-sm btn-primary">
-                                            <i class="bi bi-pencil-square"></i> Edit
+
+                                    <button class="btn btn-sm btn-primary">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </button>
+
+                                    <form action="/delete/student/{{ $student->id }}" method="POST" onsubmit="return confirm('Are you sure?')" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-sm btn-danger">
+                                            <i class="bi bi-trash3"></i> Delete
                                         </button>
-        
-                                ->
-                                        <form action="/delete/student/{{ $student->id }}" method="POST" onsubmit="return confirm('Are you sure?')" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-sm btn-danger">
-                                                <i class="bi bi-trash3"></i> Delete
-                                            </button>
-                                        </form>
+                                    </form>
                                     @endif
                                 </div>
                             </td>

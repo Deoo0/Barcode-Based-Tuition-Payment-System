@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
         ]);
         Usertype::factory()->create([
             'name' => 'Admin',
+            'name' => 'Cashier'
         ]);
     }
 }
