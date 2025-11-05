@@ -3,7 +3,7 @@
 @section('title','Students')
 
 @section('content')
-<div class="container py-4">
+<div class="container" style="max-width: 15000px">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="fw-bold text-primary">🎓 Student Management</h2>
         <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addStudentModal">
@@ -133,68 +133,9 @@
                             <td class="text-center">
                                 <div class="d-flex justify-content-center gap-2 flex-wrap">
 
-                                    <button type="button" class="btn btn-sm btn-info" data-bs-toggle="modal" data-bs-target="#viewStudentModal{{ $student->id }}">
+                                    <button type="button" class="btn btn-sm btn-info view-student-btn" data-student-id="{{ $student->id }}">
                                         <i class="bi bi-search"></i> View
                                     </button>
-
-
-                                    <div class="modal fade" id="viewStudentModal{{ $student->id }}" tabindex="-1" aria-labelledby="viewStudentModalLabel{{ $student->id }}" aria-hidden="true">
-                                        <div class="modal-dialog modal-dialog-centered modal-lg">
-                                            <div class="modal-content">
-                                                <div class="modal-header">
-                                                    <h5 class="modal-title" id="viewStudentModalLabel{{ $student->id }}">Student Details - {{ $student->last_name }}, {{ $student->first_name }}</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                </div>
-                                                <div class="modal-body">
-                                                    <div class="mb-4">
-                                                        <h4 class="{{ ($student->program->fee - $student->payments->sum('amount')) > 0 ? 'text-danger' : 'text-success' }}">
-                                                            Balance: ₱{{ number_format($student->program->fee - $student->payments->sum('amount'), 2) }}
-                                                        </h4>
-                                                        <p class="mb-0">Total Tuition: ₱{{ number_format($student->program->fee, 2) }}</p>
-                                                        <p>Total Paid: ₱{{ number_format($student->payments->sum('amount'), 2) }}</p>
-                                                    </div>
-
-                                                    <h5 class="mb-3">Payment History</h5>
-                                                    <table class="table table-hover table-bordered align-middle">
-                                                        <thead class="table-primary">
-                                                            <tr>
-                                                                <th>Term</th>
-                                                                <th>Reference No.</th>
-                                                                <th>Amount</th>
-                                                                <th>Status</th>
-                                                                <th>Date</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            @forelse ($student->payments as $payment)
-                                                            <tr>
-                                                                <td>{{ $payment->term }}</td>
-                                                                <td>{{ $payment->reference_number }}</td>
-                                                                <td>₱{{ number_format($payment->amount, 2) }}</td>
-                                                                <td>
-                                                                    <span class="badge bg-{{ $payment->status == 'Paid' ? 'success' : ($payment->status == 'Partial' ? 'warning' : 'danger') }}">
-                                                                        {{ $payment->status }}
-                                                                    </span>
-                                                                </td>
-                                                                <td>{{ $payment->created_at->format('M d, Y') }}</td>
-                                                            </tr>
-                                                            @empty
-                                                            <tr>
-                                                                <td colspan="5" class="text-center py-4 text-muted">No payment records found</td>
-                                                            </tr>
-                                                            @endforelse
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                                <div class="modal-footer">
-                                                    <a href="/payment?student_id={{ $student->id }}" class="btn btn-primary">
-                                                        <i class="bi bi-credit-card me-1"></i> Make Payment
-                                                    </a>
-                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
 
                                     @if (Auth::check() && Auth::user()->usertype->id == 1)
 
@@ -225,3 +166,18 @@
     </div>
 </div>
 @endsection
+
+<!-- Single dynamic modal for student details (content loaded via AJAX) -->
+<div class="modal fade" id="studentDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-body d-flex justify-content-center py-5">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+@push('scripts')
+<script src="/js/students.js"></script>
+@endpush

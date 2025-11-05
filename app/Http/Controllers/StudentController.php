@@ -79,6 +79,16 @@ class StudentController extends Controller
         return view('students', compact('students', 'programs'));
     }
 
+    /**
+     * Return rendered HTML for a student's details (used by AJAX modal)
+     */
+    public function details(Student $student)
+    {
+        $student->load(['program', 'payments']);
+        $html = view('partials.student-modal-content', compact('student'))->render();
+        return response()->json(['success' => true, 'html' => $html]);
+    }
+
     public function deleteStudent(Student $student){
         $student->delete(); 
         return redirect('/students');

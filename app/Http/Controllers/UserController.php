@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        // constructor left intentionally empty; access control handled via middleware
+    }
     public function deleteUser(User $user){
         $user->delete(); 
         return redirect('/users');
@@ -53,6 +57,15 @@ class UserController extends Controller
 
     public function showEditScreen(User $user){
         return view('edit-user',['user'=> $user]);
+    }
+
+    /**
+     * Return the edit form HTML for a user (used by AJAX dynamic modal)
+     */
+    public function editModal(User $user)
+    {
+        $html = view('partials.user-edit-form', compact('user'))->render();
+        return response()->json(['success' => true, 'html' => $html]);
     }
 
     public function updateUserInfo($id, Request $request ){

@@ -1,0 +1,11 @@
+/* payment.css - per-page styles for payment view */
+
+.payment-portal-container .alert {
+  z-index: 1050;
+}
+
+/* Scanner viewport placeholder styles (override as needed) */
+.scanner-viewport {
+  background: #00000010;
+  min-height: 220px;
+}

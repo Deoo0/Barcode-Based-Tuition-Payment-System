@@ -17,7 +17,8 @@
 
         <style>
             .hero-banner {
-                background-image: url('{{ asset(' images/payment-bg.jpg') }}');
+                /* ensure no stray spaces in asset path */
+                background-image: url("{{ asset('images/payment-bg.jpg') }}");
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;

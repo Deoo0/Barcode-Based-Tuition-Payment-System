@@ -115,7 +115,10 @@
                 </div>
                 <div class="card-body">
                     <div class="chart-area">
-                        <canvas id="revenueChart"></canvas>
+                        <canvas id="revenueChart" 
+    data-labels='@json($revenueLabels ?? [])'
+    data-values='@json($revenueValues ?? [])'
+></canvas>
                     </div>
                 </div>
             </div>
@@ -129,7 +132,7 @@
                 </div>
                 <div class="card-body">
                     <div class="chart-pie pt-4 pb-2">
-                        <canvas id="paymentMethodsChart"></canvas>
+                        <canvas id="paymentMethodsChart" data-payment='@json(isset($paymentData) ? $paymentData : ['Cash' => 55, 'Credit Card' => 30, 'Bank Transfer' => 15])'></canvas>
                     </div>
                     <div class="mt-4 text-center small">
                         <span class="mr-2">
@@ -172,19 +175,29 @@
                                 @forelse ($transactions as $transaction)
                                 <tr>
                                     <td>{{ $transaction->reference_number }}</td>
-                                    <td>{{ $transaction->student->name }}</td>
+                                    <td>
+                                        @php
+                                            $student = $transaction->student;
+                                            $studentName = '—';
+                                            if ($student) {
+                                                if (!empty($student->last_name) || !empty($student->first_name)) {
+                                                    $studentName = trim(($student->last_name ?? '') . ', ' . ($student->first_name ?? ''));
+                                                } else {
+                                                    $studentName = $student->name ?? '—';
+                                                }
+                                            }
+                                        @endphp
+                                        {{ $studentName }}
+                                    </td>
                                     <td class="fw-semibold">₱{{ number_format($transaction->amount, 2) }}</td>
                                     <td>
-                                    <span class="badge bg-{{ 
-                                        $transaction->status == 'Paid' ? 'success' : 
-                                        ($transaction->status == 'Pending' ? 'warning' : 
-                                        'danger') 
-                                    }}">
-                                        {{ $transaction->status }}
-                                    </span>
-                                    <td>
-                                    <td>{{ $transaction->cashier->name }}</td>
-                                    <td>{{$transaction->payment_method}}</td>
+                                        <span class="badge bg-{{ $transaction->status == 'Paid' ? 'success' : ($transaction->status == 'Pending' ? 'warning' : 'danger') }}">
+                                            {{ $transaction->status }}
+                                        </span>
+                                    </td>
+                                    <td>{{ optional($transaction->cashier)->name ?? '—' }}</td>
+                                    <td>{{ $transaction->payment_method }}</td>
+                                    <td>{{ optional($transaction->created_at)->format('M d, Y') }}</td>
                                 </tr>
                                 @empty
                                 <tr>
@@ -204,13 +217,91 @@
 </div>
 @endsection
 @push('scripts')
-<script type="module" src="{{Vite::asset('resources/js/dashboard.js')}}" ></script>
+    <!-- Load Chart.js first, then initialize charts using Blade data -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            try {
+                // Revenue chart (fallback static data if controller doesn't provide dynamic data)
+                var revenueEl = document.getElementById('revenueChart');
+                if (revenueEl && typeof Chart !== 'undefined') {
+                    var ctxRevenue = revenueEl.getContext('2d');
+                    // Parse revenue data from canvas attributes
+                    var labels = JSON.parse(revenueEl.getAttribute('data-labels') || '[]');
+                    var values = JSON.parse(revenueEl.getAttribute('data-values') || '[]');
+                    
+                    new Chart(ctxRevenue, {
+                        type: 'line',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Monthly Revenue',
+                                data: values,
+                                backgroundColor: 'rgba(78, 115, 223, 0.05)',
+                                borderColor: 'rgba(78, 115, 223, 1)',
+                                borderWidth: 2,
+                                tension: 0.3 // Slightly smooth the line
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return '₱' + value.toLocaleString();
+                                        }
+                                    }
+                                }
+                            },
+                            plugins: {
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            return 'Revenue: ₱' + context.raw.toLocaleString();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+
+                // Payment methods chart - use $paymentData if provided by controller, otherwise fallback
+                var methodsEl = document.getElementById('paymentMethodsChart');
+                if (methodsEl && typeof Chart !== 'undefined') {
+                    var raw = methodsEl.getAttribute('data-payment') || '{}';
+                    var paymentData = {};
+                    try { paymentData = JSON.parse(raw); } catch (e) { console.warn('Invalid payment data JSON:', e); }
+                    var paymentLabels = Object.keys(paymentData);
+                    var paymentValues = Object.values(paymentData);
+
+                    var ctxMethods = methodsEl.getContext('2d');
+                    new Chart(ctxMethods, {
+                        type: 'doughnut',
+                        data: {
+                            labels: paymentLabels,
+                            datasets: [{
+                                data: paymentValues,
+                                backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b'],
+                                hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf', '#d4a017', '#c0392b']
+                            }]
+                        },
+                        options: {
+                            cutout: '70%',
+                            responsive: true,
+                            plugins: { legend: { position: 'bottom' } }
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error('Error initializing dashboard charts:', err);
+            }
+        });
+    </script>
 @endpush
 
 @push('css')
 <link rel="stylesheet" href="{{Vite::asset('resources/css/dashboard.css')}}">
 @endpush
-
-@section('scripts')
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-@endsection

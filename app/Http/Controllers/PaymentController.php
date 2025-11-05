@@ -36,20 +36,38 @@ class PaymentController extends Controller
     $tuitionFee = $student->program->fee;
 
     // Determine status
-
     if ($totalPaid >= $tuitionFee && $tuitionFee > 0) {
         $status = 'Completed';
         $payment->status = $status;
     } elseif ($totalPaid == 0) {
         $status = 'Pending';
         $payment->status = $status;
+    } else {
+        $status = $payment->status;
     }
 
     // Update the newly created payment's status
     $payment->save();
 
-    // Redirect or return response
-    return redirect('payment')->with('success', 'Payment recorded successfully!');
+    // Calculate remaining balance
+    $balance = max(0, $tuitionFee - $totalPaid);
+
+    // Prepare rendered row HTML for immediate UI insertion (if table exists on the page)
+    $payment->load(['student', 'cashier']);
+    $rowHtml = view('partials.transaction-row', ['transaction' => $payment])->render();
+
+    // Return JSON response with useful data for AJAX updates
+    return response()->json([
+        'success' => true,
+        'message' => 'Payment recorded successfully!',
+        'payment' => $payment,
+        'total_paid' => $totalPaid,
+        'tuition_fee' => $tuitionFee,
+        'balance' => $balance,
+        'status' => $status,
+        'student_id' => $student->id,
+        'row' => $rowHtml,
+    ]);
 }
 }
 
