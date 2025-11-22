@@ -8,7 +8,7 @@
         var studentId = $(this).data("student-id");
         if (!studentId) return;
 
-        var modalEl = document.getElementById("studentDetailModal");
+        var modalEl = document.getElementById("studentModal");
         if (!modalEl) return;
 
         var bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
@@ -45,5 +45,39 @@
                         '<div class="modal-body"><p class="text-danger">An error occurred while loading. Please try again.</p></div>'
                     );
             });
+    });
+})();
+
+(function () {
+    $(document).on("click", ".edit-student-btn", function (e) {
+        e.preventDefault();
+        var studentId = $(this).data("student-id");
+        if (!studentId) return;
+
+        var modalEl = document.getElementById("studentModal");
+        if (!modalEl) return;
+
+        var bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        $(modalEl)
+            .find(".modal-content")
+            .html(
+                '<div class="modal-body d-flex justify-content-center py-5"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div></div>'
+            );
+        bsModal.show();
+
+        $.get('/students/' + studentId + '/edit-modal')
+            .done(function(response){
+                if(response && response.success && response.html) {
+                    $(modalEl).find('.modal-content').html(response.html);
+                    bsModal.show();
+                }else {
+                    $(modalEl).find('.modal-content').html('<div class="modal-body"><p class="text-danger">Could not load form. Please try again.</p></div>');
+                    bsModal.show();
+                }
+            })
+            .fail(function(){
+                $(modalEl).find('.modal-content').html('<div class="modal-body"><p class="text-danger">An error occurred while loading. Please try again.</p></div>');
+                bsModal.show();
+            })
     });
 })();

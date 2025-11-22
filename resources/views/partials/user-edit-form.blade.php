@@ -2,12 +2,10 @@
     <h5 class="modal-title">Edit User - {{ $user->name }}</h5>
     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 </div>
-<div class="modal-body">
-
-    <form action="/edit-user/{{ $user->id }}" method="POST" id="user-edit-form-{{ $user->id }}">
-        @csrf
-        @method('PUT')
-
+<form action="/edit-user/{{ $user->id }}" method="POST">
+    @csrf
+    @method('PUT')
+    <div class="modal-body">
         <div class="mb-3">
             <label for="fullname" class="form-label">Full Name</label>
             <input type="text" name="name" class="form-control" value="{{ $user->name }}" required>
@@ -34,9 +32,9 @@
                 <label class="form-check-label">Admin</label>
             </div>
         </div>
-    </form>
-</div>
-<div class="modal-footer">
-    <button type="submit" form="user-edit-form-{{ $user->id }}" class="btn btn-warning">Update</button>
-    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-</div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-warning">Update</button>
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+    </div>
+</form>

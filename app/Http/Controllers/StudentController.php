@@ -96,5 +96,31 @@ class StudentController extends Controller
 
     public function editStudent(Student $student){
         //Need Edit/Update Functionality
+        $programs = Program::all();
+        $html = view('partials.edit-student',compact('student','programs'))->render();
+        return response()->json(['success' => true, 'html' => $html]);
+    }
+    public function updateStudentInfo($id, Request $request){
+        // 'student_number',
+        // 'first_name',
+        // 'last_name',
+        // 'middle_name',
+        // 'phone',
+        // 'email',
+        // 'address',
+        // 'program_id',
+        $student = Student::findOrFail($id);
+        $student -> student_number = $request->student_number;
+        $student -> first_name = $request->first_name;
+        $student -> last_name = $request->last_name;
+        $student -> middle_name = $request->middle_name;
+        $student -> phone = $request->phone;
+        $student -> email = $request->email;
+        $student -> address = $request->address;
+        $student -> program_id = $request->program_id;
+
+        $student -> save();
+        return redirect()->back()->with('success', 'Student updated successfully!');
+
     }
 }

@@ -139,7 +139,7 @@
 
                                     @if (Auth::check() && Auth::user()->usertype->id == 1)
 
-                                    <button class="btn btn-sm btn-primary">
+                                    <button class="btn btn-sm btn-primary edit-student-btn" data-student-id="{{ $student->id }}">
                                         <i class="bi bi-pencil-square"></i> Edit
                                     </button>
 
@@ -168,7 +168,7 @@
 @endsection
 
 <!-- Single dynamic modal for student details (content loaded via AJAX) -->
-<div class="modal fade" id="studentDetailModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="studentModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content border-0 shadow">
             <div class="modal-body d-flex justify-content-center py-5">
