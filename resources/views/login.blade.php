@@ -50,7 +50,7 @@
         <button type="submit" class="btn btn-primary w-100 mt-3">Login</button>
 
         <div class="form-footer mt-3 text-center">
-          <a href="#forgot-password" class="forgot-password">Forgot Password?</a>
+          <a href="{{ route('forgotpw') }}" class="forgot-password">Forgot Password?</a>
         </div>
       </form>
     </section>

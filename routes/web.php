@@ -14,6 +14,7 @@ Route::get('/', function () {
 
 Route::post('/login', [UserController::class, 'login']);
 Route::post('/logout', [UserController::class, 'logout']);
+Route::get('/forgotpw',fn() => view('forgotpw'))->name('forgotpw');
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', fn() => view('home'))->name('home');
