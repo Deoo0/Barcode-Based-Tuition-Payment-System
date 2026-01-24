@@ -70,7 +70,7 @@
             <div class="text-center">
                 <h2 class="mb-4">Start Managing Your Payments Today</h2>
                 <a href="{{ route('students') }}" class="btn btn-success btn-lg me-2">Manage Students <i class="bi bi-people"></i></a>
-                <a href="{{ route('statistics') }}" class="btn btn-outline-primary btn-lg">View Reports <i class="bi bi-file-earmark-text"></i></a>
+                <a href="{{ route('dashboard') }}" class="btn btn-outline-primary btn-lg">View Reports <i class="bi bi-file-earmark-text"></i></a>
             </div>
         </div>
     </div>
