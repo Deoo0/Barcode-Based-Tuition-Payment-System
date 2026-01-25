@@ -50,8 +50,9 @@ class DashboardController extends Controller
 
         $months = collect();
         for ($i = 5; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i)->startOfMonth();
-            $months->push($date);
+            $months->push(
+                Carbon::now()->subMonths($i)->startOfMonth()
+            );
         }
 
         foreach ($months as $month) {
@@ -63,17 +64,6 @@ class DashboardController extends Controller
             $revenueValues[] = $revenue ? round($revenue->total, 2) : 0;
         }
 
-
-
-        // Map revenue data to months, using 0 for months with no data
-        foreach ($months as $month) {
-            $revenue = $revenueData->first(function ($item) use ($month) {
-                return $item->month == $month['month'] && $item->year == $month['year'];
-            });
-            
-            $revenueLabels[] = $month->format('M Y');
-            $revenueValues[] = $revenue ? round($revenue->total, 2) : 0;
-        }
 
 
         return view('dashboard', [
