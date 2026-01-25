@@ -34,31 +34,36 @@ class DashboardController extends Controller
 
 
         // Get revenue data for the last 6 months
-        $revenueData = Payment::select(
-            DB::raw('MONTH(created_at) as month'),
-            DB::raw('YEAR(created_at) as year'),
-            DB::raw('SUM(amount) as total')
-        )
-            ->where('created_at', '>=', Carbon::now()->subMonths(6))
-            ->groupBy('year', 'month')
-            ->orderBy('year', 'asc')
-            ->orderBy('month', 'asc')
-            ->get();
+        $revenueData = Payment::selectRaw("
+        DATE_TRUNC('month', created_at) as month,
+        SUM(amount) as total
+        ")
+        ->where('created_at', '>=', Carbon::now()->subMonths(6))
+        ->where('status', 'Paid')
+        ->groupBy('month')
+        ->orderBy('month', 'asc')
+        ->get();
 
-        // Format revenue data for the chart
+
         $revenueLabels = [];
         $revenueValues = [];
 
-        // Create array of last 6 months (including current)
         $months = collect();
         for ($i = 5; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
-            $months->push([
-                'month' => $date->month,
-                'year' => $date->year,
-                'label' => $date->format('M Y'),
-            ]);
+            $date = Carbon::now()->subMonths($i)->startOfMonth();
+            $months->push($date);
         }
+
+        foreach ($months as $month) {
+            $revenue = $revenueData->first(function ($item) use ($month) {
+                return Carbon::parse($item->month)->equalTo($month);
+            });
+
+            $revenueLabels[] = $month->format('M Y');
+            $revenueValues[] = $revenue ? round($revenue->total, 2) : 0;
+        }
+
+
 
         // Map revenue data to months, using 0 for months with no data
         foreach ($months as $month) {
@@ -66,7 +71,7 @@ class DashboardController extends Controller
                 return $item->month == $month['month'] && $item->year == $month['year'];
             });
             
-            $revenueLabels[] = $month['label'];
+            $revenueLabels[] = $month->format('M Y');
             $revenueValues[] = $revenue ? round($revenue->total, 2) : 0;
         }
 
